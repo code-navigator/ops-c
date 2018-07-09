@@ -1,0 +1,18 @@
+//- Application Layout
+v-app(id="app")
+
+  //- Main navigation drawer
+  appDrawer(
+    :drawer="drawer"
+    :routes="routes"
+  )
+
+  //- Main application header
+  appHeader(
+    @click="toggleDrawer"
+  )
+  //- Main content for injecting routes
+  appContent
+  
+  //- Main application footer
+  appFooter

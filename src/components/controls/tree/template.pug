@@ -1,0 +1,43 @@
+//- Each tree node is a list item in unordered list of the parent node
+li(
+  @dragover.prevent="draggingOver($event)"
+  @dragstart="dragStarted(model, $event)"
+  @drop="dropped(model, $event)"
+  :draggable="isEdit"
+)
+  //- Wrap each node in a div
+  div(
+    :class="{bold: isFolder}"
+    @dblclick="toggle(model, $event)"
+    @click="selectItem(model)"
+    class="no-wrap"
+  )
+
+    //- Icons
+    span
+      v-icon(v-if="isFolder") folder
+      v-icon(v-else) folder_open
+
+    //- Input field allows editing
+    input(
+      :class = "{selected: model.id===id}"
+      :readOnly="!readOnly"
+      @blur="lostFocus"
+      @keyup.enter="lostFocus"
+      ref="node"
+      style="width: 95%"
+      type="text"
+      v-model="model.title"
+    )
+    
+  //- Recursive loop for displaying children
+  ul(v-show="model.open")
+    tree(
+      :id="id"
+      :key="model.id"
+      :model="model"
+      :readOnly="readOnly"
+      @click="selectItem"
+      class="item"
+      v-for="model in model.children"
+    )

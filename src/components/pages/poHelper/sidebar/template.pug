@@ -1,0 +1,66 @@
+v-container
+  v-layout(
+    row
+    wrap
+  ) 
+    v-flex(
+      xs12
+      class="fullSize"
+    ) 
+      dropdownList(
+        :items="lists.poTypes"
+        :label="'PO Type'"
+        :value="selectedFilters['poType']"
+        v-on:keyup="(value)=>onChange('poType', value)"
+      )
+      dropdownList(
+        :items="lists.customers"
+        :label="'Customers'"
+        :value="selectedFilters['customer']"
+        v-on:keyup="(value)=>onChange('customer', value)"
+      )
+      dropdownList(
+        :items="lists.primes"
+        :label="'Prime Contractor'"
+        :value="selectedFilters['prime']"
+        v-on:keyup="(value)=>onChange('prime', value)"
+      )
+      dropdownList(
+        :items="lists.aircrafts"
+        :label="'Aircraft Model'"
+        :value="selectedFilters['aircraft']"
+        v-on:keyup="(value)=>onChange('aircraft', value)"
+      )
+      dropdownList(
+        :items="lists.dpasRatings"
+        :label="'DPAS Rating'"
+        :value="selectedFilters['dpasRating']"
+        v-on:keyup="(value)=>onChange('dpasRating', value)"
+      )
+      dropdownList(
+        :items="lists.shipMethods"
+        :label="'Ship Method'"
+        :value="selectedFilters['shipMethod']"
+        v-on:keyup="(value)=>onChange('shipMethod', value)"
+      )
+      textBox(
+        :label="'Quote Ref.'"
+        :value="selectedFilters['quoteRef']"
+        v-on:keyup="(value)=>this.onChange('quoteRef', value)"
+      )
+      textBox(
+        :label="'Material Specification'"
+        :value="selectedFilters['materialSpec']"
+        v-on:keyup="(value)=>this.onChange('materialSpec', value)"
+      )
+      checkBox(
+        :label="'Cygnus Furnished Material'"
+        :value="selectedFilters['furnishedMaterial']"
+        v-on:keyup="(value)=>this.onChange('furnishedMaterial', value)"
+      )
+      datePicker(
+        :label="'Return Date'"
+        :value="selectedFilters['returnDate']"
+        v-on:keyup="(value)=>onChange('returnDate', value)"
+      )
+

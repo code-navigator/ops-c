@@ -1,0 +1,20 @@
+v-flex(xs12)
+  v-menu(
+    :close-on-content-click="false"
+    lazy
+    ref="menu"
+    v-model="menu"
+  )
+    v-text-field(
+      :label="label"
+      class="datePicker"
+      prepend-icon="event"
+      readonly      
+      slot="activator"
+      v-model="input"
+    )
+    v-date-picker(
+      @input="$refs.menu.save(input)"
+      no-title
+      v-model="input"
+    )

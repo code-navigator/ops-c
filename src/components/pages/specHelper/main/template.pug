@@ -1,0 +1,85 @@
+//- Main area
+v-flex(style="height:100%;")
+  v-tabs(pagination dark color="grey")
+
+    //- First tab is for displaying requirements
+    //- associated with selected node
+    v-tab Req.
+    v-tab-item
+
+      //- Menu attached to outer container
+      v-flex(
+        @contextmenu="show"
+      )
+
+        //- Table is scoped to component slot
+        dataTable(
+          :headers="headers",
+          :items="items"
+        )  
+          template(slot-scope="table")
+            tr(
+              :class="{table, move : isEdit }"
+              :draggable="isEdit"
+              :id="table.item.description"
+              @change="selectRequirement(table.item)"
+              @click="selectRequirement(table.item)"
+              @dragover.prevent="draggingOver($event)"
+              @dragstart="dragStarted(table.item, $event)"
+              @drop="dropped(table.item, $event)"
+            )
+
+              //- Enumerate rows in table
+              td.node-order {{ table.item.nodeOrder }}
+              
+              //- Show description
+              td
+                v-textarea(
+                  :readonly="!isEdit"
+                  auto-grow
+                  class="field"
+                  hide-details
+                  rows="1"
+                  type="text"
+                  v-model="table.item.description"
+                )
+
+              //- Show requirement
+              td
+                a(v-if="table.item.description=='SPEC' && !isEdit ? true : false"
+                @click="test(table.item.requirement)") {{ table.item.requirement }}
+                v-textarea(
+                  v-else
+                  :readonly="!isEdit"
+                  auto-grow
+                  class="field"
+                  hide-details
+                  rows="1" 
+                  type="text"
+                  v-model="table.item.requirement"
+                )
+
+        //- Menu structure
+        contextMenu(
+          :menuEvents="menuEvents"
+          :menuItems="menuItems"
+        )
+
+    //- The other tabs are loaded dynamically for viewing documents
+    v-tab(
+      :key="tab.title"
+      v-for="tab in tabs"
+    )
+
+      //- Add button for closing tab
+      span {{ tab.title }}
+        v-btn(fla small fab depressed) X
+    
+    //- View documents (pdf) in iframe element
+    v-tab-item(
+      :key="tab.title"
+      style="height: 100%;"
+      v-for="tab in tabs"
+    )
+      div(v-if="tab.url" style="height: 100%;")
+        iframe(:src="tab.url+'#zoom=150&page=1'" width="100%" style="height:100%;")

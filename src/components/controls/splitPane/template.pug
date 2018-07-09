@@ -1,0 +1,13 @@
+splitPane(
+  :default-percent="defaultPercent"
+  :max-percent="maxPercent"
+  :min-percent="minPercent"
+  split="vertical"
+)
+  //- Sidebar
+  template(slot="paneL")
+    slot(name="paneL")
+
+  //- Main output area
+  template(slot="paneR")
+    slot(name="paneR")

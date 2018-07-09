@@ -1,0 +1,9 @@
+v-data-table(
+  :headers="headers"
+  :items="items"
+  hide-actions
+)
+
+  //- Pass items from parent slot to v-data-table slot
+  template(slot="items" slot-scope="props")
+    slot(:item="props.item")

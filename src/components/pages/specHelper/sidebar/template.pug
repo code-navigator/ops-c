@@ -1,0 +1,20 @@
+v-container
+  //- Attach menu to list so it appears only once in DOM
+  ul(
+    @contextmenu="show"
+    class="tree"
+  )
+    //- Recursive tree component for showing nested nodes
+    tree(
+      :id = "currentNodeId"
+      :model="nodes"
+      :readOnly="isEdit"
+      @click="selectNode"
+      class="item"
+    )
+    
+  //- Define context menu (activated by right-click)
+  contextMenu(
+    :menuEvents="menuEvents"
+    :menuItems="menuItems" 
+  )

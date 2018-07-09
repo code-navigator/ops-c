@@ -1,0 +1,15 @@
+v-navigation-drawer(
+  app
+  disable-resize-watcher
+  v-model = "position"
+)
+  v-list
+    v-list-tile(
+      :key="route.name"
+      :to="route.path"
+      v-for="route in routes"
+    )
+      v-list-tile-action
+        v-icon {{ route.icon}}
+      v-list-tile-content
+        v-list-tile-title {{ route.name }}

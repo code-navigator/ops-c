@@ -1,0 +1,21 @@
+v-menu(
+  :position-x="x"
+  :position-y="y"
+  offset-y
+  transition="scale-transition"
+  v-model="showMenu"
+)
+
+  //- Menu list of items
+  v-list
+    v-list-tile(
+      :key="item.id"
+      @click="item.handler"
+      v-for="item in menuItems"
+      v-show="item.show"
+    )
+    
+      //- Each item is a row in the list
+      v-layout(row wrap)
+        v-list-tile-title {{item.title}}
+        hr(v-if="item.separator")
