@@ -1,6 +1,11 @@
 //- Main area
 v-flex(style="height:100%;")
-  v-tabs(pagination dark color="grey")
+  v-tabs(
+    pagination
+    dark 
+    color="grey"
+    v-model="active"
+  )
 
     //- First tab is for displaying requirements
     //- associated with selected node
@@ -46,8 +51,10 @@ v-flex(style="height:100%;")
 
               //- Show requirement
               td
-                a(v-if="table.item.description=='SPEC' && !isEdit ? true : false"
-                @click="test(table.item.requirement)") {{ table.item.requirement }}
+                a(
+                  v-if="(table.item.description=='SPEC' || table.item.description=='PROC') && !isEdit ? true : false"
+                  @click="openTab(table.item.requirement)"
+                ) {{ table.item.requirement }}
                 v-textarea(
                   v-else
                   :readonly="!isEdit"
@@ -73,7 +80,14 @@ v-flex(style="height:100%;")
 
       //- Add button for closing tab
       span {{ tab.title }}
-        v-btn(fla small fab depressed) X
+        v-btn(
+          @click="closeTab" 
+          color="error" 
+          dark
+          depressed 
+          fab 
+          small 
+        ) X
     
     //- View documents (pdf) in iframe element
     v-tab-item(

@@ -1,6 +1,3 @@
-import ArrayUtil from '@Classes/arrayUtil'
-import NodeUtil from '@Classes/nodeUtil'
-
 export default {
   // Add empty node as child to currently selected node
   addNode (state) {
@@ -14,7 +11,12 @@ export default {
 
   // Add new tab for viewing document
   addTab (state, tab) {
-    state.tabs.addNewTab(tab)
+    state.tabs.push(
+      {
+        title: tab.title,
+        url: tab.url
+      }
+    )
   },
 
   // Clear array of deleted requirements
@@ -39,7 +41,7 @@ export default {
 
   // Make a copy of the current node
   copyNode (state) {
-    state.clippedNode = state.nodes.duplicateNode()
+    state.clippedNode = state.nodes.duplicateNode(state.currentNode)
     state.nodeIsClipped = true
   },
 
@@ -58,11 +60,6 @@ export default {
     state.nodes.moveNodeToNewLocation(state.currentNode, destNode)
   },
 
-  // Open current node
-  openNode (state) {
-    state.currentNode.open = true
-  },
-
   // Paste a copy of the node (branch) into the tree
   pasteNode (state) {
     state.nodes.pasteInCopyOfNode(state.clippedNode, state.currentNode)
@@ -77,6 +74,7 @@ export default {
   // Set tree state
   setNodes (state, children) {
     state.nodes.children = children
+    state.currentNode = state.nodes
     state.nodes.open = false
   },
 
@@ -99,37 +97,26 @@ export default {
   // Delete requirement from list
   removeRequirement (state) {
     state.deletedRequirements.push(state.currentRequirement)
-    state.currentNode.requirements = state.currentNode.requirements
-      .filter((requirement) => {
-        return requirement.id !== state.currentRequirement.id
-      })
+    state.nodes.removeRequirement(state.currentNode, state.currentRequirement)
   },
 
   // Reorder requirements
   reorderRequirements (state, data) {
-    const arr = new ArrayUtil()
-
-    // Get position within requirements array
-    var pos1 = arr.getIndexOfMatchingElement(state.currentNode.requirements, 'id', data.source.id)
-    var pos2 = arr.getIndexOfMatchingElement(state.currentNode.requirements, 'id', data.destination.id)
-    console.log(pos1)
-    // Swap orders to change sort order
-    var temp = state.currentNode.requirements[pos1].nodeOrder
-    state.currentNode.requirements[pos1].nodeOrder = state.currentNode.requirements[pos2].nodeOrder
-    state.currentNode.requirements[pos2].nodeOrder = temp
+    state.nodes.reorderRequirements(state.currentNode, data)
   },
 
   // Set currently selected requirement
-  selectRequirement (state, data) {
-    state.currentRequirement = data
+  selectRequirement (state, requirement) {
+    state.currentRequirement = requirement
+  },
+
+  // Set currently selected  tab
+  setActiveTab (state, activeTab) {
+    state.activeTab = activeTab
   },
 
   // Toggle node state
-  toggleNode (state, data) {
-    const node = new NodeUtil()
-
-    if (state.currentNode.children) {
-      node.toggleVisibility(state.currentNode, data)
-    }
+  toggleNode (state, isVisible) {
+    state.nodes.toggleVisibility(state.currentNode, isVisible)
   }
 }

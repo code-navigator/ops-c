@@ -62,6 +62,12 @@ export default class Nodes {
       ? arr.getMax(requirements, 'nodeOrder') + 1 : 1
   }
 
+  getIndexOfMatchingElement (arr, key, val) {
+    return arr
+      .map((element) => { return element[key] })
+      .indexOf(val)
+  }
+
   insertCopyOfNode (srcNode, destNode) {
     let copyOfNode = this.duplicateNode(srcNode)
     copyOfNode = this.cloneNode(copyOfNode, copyOfNode.parentId)
@@ -70,7 +76,6 @@ export default class Nodes {
 
   moveNodeToNewLocation (srcNode, destNode) {
     let copyOfNode = this.duplicateNode(srcNode)
-    copyOfNode = this.cloneNode(copyOfNode)
     copyOfNode.parentId = destNode.id
     destNode.children.push(copyOfNode)
   }
@@ -85,5 +90,31 @@ export default class Nodes {
     parentNode.children = parentNode.children
       .filter((child) => { return child.id !== id })
       .map((child) => { return this.removeNode(child, id) })
+    return parentNode
+  }
+
+  removeRequirement (currentNode, currentRequirement) {
+    currentNode.requirements = currentNode.requirements
+      .filter((requirement) => {
+        return requirement.id !== currentRequirement.id
+      })
+  }
+
+  reorderRequirements (currentNode, data) {
+    // Get position within requirements array
+    const pos1 = this.getIndexOfMatchingElement(currentNode.requirements, 'id', data.source.id)
+    const pos2 = this.getIndexOfMatchingElement(currentNode.requirements, 'id', data.destination.id)
+    // Swap orders to change sort order
+    const temp = currentNode.requirements[pos1].nodeOrder
+    currentNode.requirements[pos1].nodeOrder = currentNode.requirements[pos2].nodeOrder
+    currentNode.requirements[pos2].nodeOrder = temp
+  }
+
+  toggleVisibility (parentNode, isVisible) {
+    parentNode.open = isVisible
+
+    for (var i = 0; i < parentNode.children.length; i++) {
+      this.toggleVisibility(parentNode.children[i], isVisible)
+    }
   }
 }

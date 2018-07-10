@@ -1,7 +1,9 @@
 import Nodes from '@Classes/Nodes'
-import Tabs from '@Classes/Tabs'
 
 export default {
+  // Number of active tab
+  activeTab: null,
+
   // Node sitting on clipboard
   clippedNode: Object,
 
@@ -65,6 +67,5 @@ export default {
   requirements: [],
 
   // List of open tabs containing specs and procedures
-  tabs: new Tabs()
-
+  tabs: []
 }

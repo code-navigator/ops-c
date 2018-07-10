@@ -15,11 +15,21 @@ export default {
       'headers',
       'isEdit',
       'pdf',
-      'tabs'
+      'activeTab'
     ]),
     ...mapGetters('specHelper', {
-      items: 'requirements'
+      items: 'requirements',
+      tabs: 'tabs'
     }),
+
+    active: {
+      get () {
+        return this.activeTab
+      },
+      set (newValue) {
+        this.setActiveTab(newValue)
+      }
+    },
 
     // Define context menu options
     menuItems () {
@@ -55,10 +65,13 @@ export default {
   methods: {
     ...mapActions('specHelper', [
       'addRequirement',
+      'closeTab',
+      'openTab',
       'removeAllRequirements',
       'removeRequirement',
       'reorderRequirements',
-      'selectRequirement'
+      'selectRequirement',
+      'setActiveTab'
     ]),
 
     // Show menu
