@@ -7,6 +7,8 @@ import Vue from 'vue'
 
 Vue.config.productionTip = false
 
+Vue.use(require('vue-shortkey'))
+
 new Vue({
   router,
   store,

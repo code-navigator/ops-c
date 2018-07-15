@@ -28,18 +28,21 @@ export default {
           title: 'Edit',
           handler: this.edit,
           show: !this.isEdit,
+          shortcut: ['ctrl', 'alt', 'e'],
           separator: true
         },
         {
           title: 'Expand All',
           handler: this.expandNode,
           show: !this.isEdit,
+          shortcut: ['ctrl', 'alt', 'arrowdown'],
           separator: false
         },
         {
           title: 'Collapse All',
           handler: this.collapseNode,
           show: !this.isEdit,
+          shortcut: ['ctrl', 'alt', 'arrowup'],
           separator: false
         },
         {
@@ -56,7 +59,7 @@ export default {
         },
         {
           title: 'Paste',
-          handler: this.pasteNode,
+          handler: this.pasteInCopyOfNode,
           show: (this.isEdit && this.nodeIsClipped),
           separator: this.nodeIsClipped
         },
@@ -75,12 +78,14 @@ export default {
         {
           title: 'Save',
           handler: this.save,
+          shortcut: ['ctrl', 'alt', 's'],
           show: this.isEdit,
           separator: false
         },
         {
           title: 'Cancel',
           handler: this.cancelEdit,
+          shortcut: ['ctrl', 'alt', 'esc'],
           show: this.isEdit,
           separator: false
         }
@@ -108,7 +113,7 @@ export default {
       'cutNode',
       'edit',
       'getNodes',
-      'pasteNode',
+      'pasteInCopyOfNode',
       'removeNode',
       'save',
       'selectNode',

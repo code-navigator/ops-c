@@ -37,14 +37,14 @@ export default {
     }, 500)
   },
 
-  // Copy node in tree
-  copyInsertNode ({commit}, data) {
-    commit('copyInsertNode', data)
-  },
-
   // Make a copy of the current node
   copyNode ({commit}) {
     commit('copyNode')
+  },
+
+  // Copy node in tree
+  copyNodeToNewLocation ({commit}, data) {
+    commit('copyNodeToNewLocation', data)
   },
 
   // Cut out node (i.e., make a copy and remove the original node)
@@ -115,11 +115,11 @@ export default {
   },
 
   // Move node in tree
-  moveNode ({commit, dispatch}, data) {
+  moveNodeToNewLocation ({commit, dispatch}, data) {
     // First, remove it from its original location
     dispatch('removeNode')
     // Then move it to its new location
-    commit('moveNode', data)
+    commit('moveNodeToNewLocation', data)
   },
 
   // Open tab linked to current requirement
@@ -130,18 +130,18 @@ export default {
   },
 
   // Paste copy of node at current location
-  pasteNode ({commit}) {
-    commit('pasteNode')
-  },
-
-  // Remove a node from the tree
-  removeNode ({commit}) {
-    commit('removeNode')
+  pasteInCopyOfNode ({commit}) {
+    commit('pasteInCopyOfNode')
   },
 
   // Remove all requirements attached to current Node
   removeAllRequirements ({commit}) {
     commit('removeAllRequirements')
+  },
+
+  // Remove a node from the tree
+  removeNode ({commit}) {
+    commit('removeNode')
   },
 
   // Remove a requirement from the current node

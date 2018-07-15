@@ -1,5 +1,5 @@
 import axios from 'axios'
-import Url from './../classes/urlUtil'
+import Url from '@Models/Url'
 
 export default {
   get (url, request) {

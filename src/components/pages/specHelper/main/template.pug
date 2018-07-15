@@ -3,7 +3,7 @@ v-flex(style="height:100%;")
   v-tabs(
     pagination
     dark 
-    color="grey"
+    color="secondary"
     v-model="active"
   )
 
@@ -24,7 +24,7 @@ v-flex(style="height:100%;")
         )  
           template(slot-scope="table")
             tr(
-              :class="{table, move : isEdit }"
+              :class="{table, move : isEdit, selected: table.item.id === id }"
               :draggable="isEdit"
               :id="table.item.description"
               @change="selectRequirement(table.item)"

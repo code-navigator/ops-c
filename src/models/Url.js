@@ -1,6 +1,6 @@
 const HOST = `http://localhost:3000/`
 
-export default class urlUtil {
+export default class Url {
   constructor (subRoute, params) {
     this.params = params
     this.subRoute = subRoute

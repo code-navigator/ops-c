@@ -25,5 +25,10 @@ export default {
         this.showMenu = true
       })
     }
+  },
+  methods: {
+    action () {
+      alert('testing')
+    }
   }
 }

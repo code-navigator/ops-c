@@ -18,6 +18,7 @@ export default {
       'activeTab'
     ]),
     ...mapGetters('specHelper', {
+      id: 'currentRequirementId',
       items: 'requirements',
       tabs: 'tabs'
     }),
@@ -35,19 +36,41 @@ export default {
     menuItems () {
       return [
         {
+          title: 'Edit',
+          handler: this.edit,
+          show: !this.isEdit,
+          separator: true
+        },
+        {
           title: 'Add',
           handler: this.addRequirement,
-          show: this.isEdit
+          shortcut: ['ctrl', 'alt', 'enter'],
+          show: this.isEdit,
+          separator: false
         },
         {
           title: 'Remove',
           handler: this.removeRequirement,
-          show: this.isEdit
+          show: this.isEdit,
+          separator: false
         },
         {
           title: 'Remove All',
           handler: this.removeAllRequirements,
-          show: this.isEdit
+          show: this.isEdit,
+          separator: true
+        },
+        {
+          title: 'Save',
+          handler: this.save,
+          show: this.isEdit,
+          separator: false
+        },
+        {
+          title: 'Cancel',
+          handler: this.cancelEdit,
+          show: this.isEdit,
+          separator: false
         }
       ]
     }
@@ -65,11 +88,14 @@ export default {
   methods: {
     ...mapActions('specHelper', [
       'addRequirement',
+      'cancelEdit',
       'closeTab',
+      'edit',
       'openTab',
       'removeAllRequirements',
       'removeRequirement',
       'reorderRequirements',
+      'save',
       'selectRequirement',
       'setActiveTab'
     ]),

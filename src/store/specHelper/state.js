@@ -1,5 +1,3 @@
-import Nodes from '@Classes/Nodes'
-
 export default {
   // Number of active tab
   activeTab: null,
@@ -12,6 +10,9 @@ export default {
 
   // Currently selected requirement
   currentRequirement: Object,
+
+  // List of requirements for currently selected node
+  currentRequirements: [],
 
   // Nodes to delete from database
   deletedNodes: [],
@@ -49,22 +50,18 @@ export default {
   // Module of URL
   moduleName: 'spechelper',
 
-  // Base tree structure
-  // nodes: {
-  //   id: '0',
-  //   title: 'Root Node',
-  //   children: [],
-  //   open: false,
-  //   readOnly: true,
-  //   requirements: []
-  // },
-  nodes: new Nodes(),
-
   // Node is on clipboard ready to be pasted
   nodeIsClipped: false,
 
-  // List of requirements for currently selected node
-  requirements: [],
+  // Base tree structure
+  nodes: {
+    id: '0',
+    title: 'Root Node',
+    children: [],
+    open: false,
+    readOnly: true,
+    requirements: []
+  },
 
   // List of open tabs containing specs and procedures
   tabs: []

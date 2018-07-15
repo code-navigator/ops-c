@@ -13,6 +13,8 @@ v-menu(
       @click="item.handler"
       v-for="item in menuItems"
       v-show="item.show"
+      v-shortkey="item.shortcut"
+      @shortkey="item.handler"
     )
     
       //- Each item is a row in the list

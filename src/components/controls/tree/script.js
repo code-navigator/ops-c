@@ -28,8 +28,8 @@ export default {
 
   methods: {
     ...mapActions('specHelper', [
-      'moveNode',
-      'copyInsertNode'
+      'moveNodeToNewLocation',
+      'copyNodeToNewLocation'
     ]),
     // Toggle for expanding and collapsing node
     toggle (model) {
@@ -79,9 +79,9 @@ export default {
       e.stopPropagation()
 
       if (e.ctrlKey) {
-        this.copyInsertNode(item)
+        this.copyNodeToNewLocation(item)
       } else {
-        this.moveNode(item)
+        this.moveNodeToNewLocation(item)
       }
     }
   }

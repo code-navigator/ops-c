@@ -18,10 +18,4 @@ export default class Node {
     this.readOnly = readOnly
     this.requirements = requirements
   }
-
-  addNewNode () {
-    this.children = this.children.push(
-      new Node()
-    )
-  }
 }
