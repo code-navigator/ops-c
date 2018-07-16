@@ -72,10 +72,7 @@ export default {
   // Add new tab for viewing document
   addTab (state, tab) {
     state.tabs.push(
-      new Tab({
-        title: tab.title,
-        url: tab.url
-      })
+      new Tab(tab.title, tab.url)
     )
   },
 
