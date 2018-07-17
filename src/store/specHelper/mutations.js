@@ -120,8 +120,8 @@ export default {
   // Move node to another location in tree
   moveNodeToNewLocation (state, destNode) {
     let copyOfNode = duplicateNode(state.currentNode)
-    // Change its parent ID
-    copyOfNode.parentId = destNode.id
+    // Clone node and change its parent ID to point to its new parent
+    copyOfNode = cloneNode(copyOfNode, destNode.id)
     // Attach the node to its new parent
     destNode.children.push(copyOfNode)
   },

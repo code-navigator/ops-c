@@ -118,11 +118,10 @@ export default {
 
   // Move node in tree
   moveNodeToNewLocation ({commit, dispatch}, data) {
-    dispatch('copyNode')
-    // First, remove it from its original location
+    // First move it to its new location
+    commit('moveNodeToNewLocation', data)
+    // Then, remove it from its original location
     dispatch('removeNode')
-    // Then move it to its new location
-    commit('pasteInNode', data)
   },
 
   // Open tab linked to current requirement
