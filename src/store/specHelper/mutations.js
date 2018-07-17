@@ -51,7 +51,7 @@ export default {
   // Add empty node as child to currently selected node
   addNode (state) {
     state.currentNode.children.push(
-      new Node()
+      new Node({parentId: state.currentNode.id})
     )
   },
 
@@ -119,7 +119,6 @@ export default {
 
   // Move node to another location in tree
   moveNodeToNewLocation (state, destNode) {
-    // Get a clean copy of the current node
     let copyOfNode = duplicateNode(state.currentNode)
     // Change its parent ID
     copyOfNode.parentId = destNode.id
@@ -129,7 +128,8 @@ export default {
 
   // Paste a copy of the node (branch) into the tree
   pasteInCopyOfNode (state) {
-    let copyOfNode = cloneNode(state.clippedNode, state.currentNode.id)
+    let copyOfNode = duplicateNode(state.clippedNode)
+    copyOfNode = cloneNode(copyOfNode, state.currentNode.id)
     state.currentNode.children.push(copyOfNode)
   },
 
@@ -210,12 +210,30 @@ export default {
     state.currentNode = state.nodes
   },
 
+  // Sort tabs by title
+  sortTabs (state) {
+    state.tabs = state.tabs.sort((tab1, tab2) => {
+      if (tab1['title'] < tab2['title']) {
+        return -1
+      }
+      if (tab1['title'] > tab2['title']) {
+        return 1
+      }
+      return 0
+    })
+  },
+
   // Toggle node state
   toggleNode (state, isVisible) {
-    state.currentNode.open = isVisible
-    // Toggle on/off the visibility of all the nodes beneath the current one
-    for (var i = 0; i < state.currentNode.children.length; i++) {
-      state.currentNode.children[i].open = isVisible
+    // Toggle on/off the visibility of all child nodes
+    const toggleNode = (parentNode, isVisible) => {
+      parentNode.open = isVisible
+
+      for (var i = 0; i < parentNode.children.length; i++) {
+        toggleNode(parentNode.children[i], isVisible)
+      }
     }
+
+    toggleNode(state.currentNode, isVisible)
   }
 }

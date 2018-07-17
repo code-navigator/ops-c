@@ -15,12 +15,12 @@ export default {
       'headers',
       'isEdit',
       'pdf',
-      'activeTab'
+      'activeTab',
+      'tabs'
     ]),
     ...mapGetters('specHelper', {
       id: 'currentRequirementId',
-      items: 'requirements',
-      tabs: 'tabs'
+      items: 'requirements'
     }),
 
     active: {

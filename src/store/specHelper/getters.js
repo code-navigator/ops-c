@@ -28,14 +28,5 @@ export default {
     if (state.currentNode.requirements) {
       return sortArray(state.currentNode.requirements, 'nodeOrder')
     }
-  },
-
-  // TODOS: Add sorting of tabs
-  // Return sorted array of tabs
-  tabs (state) {
-    // if (state.tabs) {
-    //   return sortArray(state.tabs, 'title')
-    // }
-    return state.tabs
   }
 }

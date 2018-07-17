@@ -94,6 +94,7 @@ export default {
         title: title.title,
         url: BASE_URL + '/loadprocs/' + result.data
       })
+      commit('sortTabs')
     })
   },
 
@@ -111,15 +112,17 @@ export default {
         title: title.title,
         url: BASE_URL + '/loadspecs/' + result.data
       })
+      commit('sortTabs')
     })
   },
 
   // Move node in tree
   moveNodeToNewLocation ({commit, dispatch}, data) {
+    dispatch('copyNode')
     // First, remove it from its original location
     dispatch('removeNode')
     // Then move it to its new location
-    commit('moveNodeToNewLocation', data)
+    commit('pasteInNode', data)
   },
 
   // Open tab linked to current requirement
@@ -168,6 +171,8 @@ export default {
 
   // Set currently selected node
   async selectNode ({ commit, dispatch }, data) {
+    // Remove any tabs associated with previous node
+    commit('clearTabs')
     // Display requirements for currently selected node
     await dispatch('getRequirements', data)
     commit('selectNode', data)
@@ -177,8 +182,6 @@ export default {
     dispatch('loadProcs', data)
     // Set active tab to first tab (tab no. 0)
     commit('setActiveTab', 0)
-    // Remove any tabs associated with previous node
-    commit('clearTabs')
   },
 
   // Set currently selected requirement

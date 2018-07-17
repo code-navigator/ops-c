@@ -74,8 +74,8 @@ v-flex(style="height:100%;")
 
     //- The other tabs are loaded dynamically for viewing documents
     v-tab(
-      :key="tab.title"
-      v-for="tab in tabs"
+      :key="index"
+      v-for="(tab, index) in tabs"
     )
 
       //- Add button for closing tab
@@ -83,9 +83,9 @@ v-flex(style="height:100%;")
     
     //- View documents (pdf) in iframe element
     v-tab-item(
-      :key="tab.title"
+      :key="index"
       style="height: 100%;"
-      v-for="tab in tabs"
+      v-for="(tab, index) in tabs"
     )
       div(v-if="tab.url" style="height: 100%;")
         iframe(:src="tab.url+'#zoom=150&page=1'" width="100%" style="height:100%;")
