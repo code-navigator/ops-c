@@ -16,7 +16,7 @@ const cloneNode = (node, parentId) => {
 
   // Clone child nodes
   for (var j = 0; j < node.children.length; j++) {
-    node.children[j] = this.cloneNode(node.children[j], node.id)
+    node.children[j] = cloneNode(node.children[j], node.id)
   }
 
   return node
@@ -99,10 +99,11 @@ export default {
 
   // Copy node to another location in tree
   copyNodeToNewLocation (state, destNode) {
+    console.log(destNode)
     // Get a clean copy of the current node
     let copyOfNode = duplicateNode(state.currentNode)
     // Clone it
-    copyOfNode = cloneNode(copyOfNode, copyOfNode.parentId)
+    copyOfNode = cloneNode(copyOfNode, destNode.id)
     // Attach it the destination node
     destNode.children.push(copyOfNode)
   },
