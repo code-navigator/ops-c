@@ -1,5 +1,3 @@
-import Node from '@Models/Node'
-import Requirement from '@Models/Requirement'
 import Tab from '@Models/Tab'
 import uuidv1 from 'uuid/v1'
 
@@ -34,46 +32,20 @@ const getIndexOfMatchingRequirementId = (requirements, id) => {
     .indexOf(id)
 }
 
-// Get the maximum requirement order number
-const maxOrder = (requirements) => {
-  return requirements.length > 0
-    // Find last item and increment order by one
-    ? requirements
-      .reduce((max, requirement) =>
-        requirement['nodeOrder'] > max
-          ? requirement['nodeOrder']
-          : max, requirements[0]['nodeOrder']) + 1
-    // Return 1 for the first item
-    : 1
-}
-
 export default {
   // Add empty node as child to currently selected node
-  addNode (state, dest = state.currentNode) {
-    dest.children.push(
-      new Node({parentId: state.currentNode.id})
-    )
+  addNode (state, {dest = state.currentNode, node}) {
+    dest.children.push(node)
   },
 
   // Add empty requirement placeholder
-  addRequirement (state) {
-    state.currentNode.requirements.push(
-      new Requirement(
-        {
-          // Attach to current node
-          nodeId: state.currentNode.id,
-          // Set order to next highest number
-          nodeOrder: maxOrder(state.currentNode.requirements)
-        }
-      )
-    )
+  addRequirement (state, {dest = state.currentNode, requirement}) {
+    dest.requirements.push(requirement)
   },
 
   // Add new tab for viewing document
   addTab (state, tab) {
-    state.tabs.push(
-      new Tab(tab.title, tab.url)
-    )
+    state.tabs.push(tab)
   },
 
   // Clear array of deleted nodes

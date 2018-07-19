@@ -1,16 +1,46 @@
 import api from '@Api/api'
+import Node from '@Models/Node'
+import Requirement from '@Models/Requirement'
+import Tab from '@Models/Tab'
 
 const BASE_URL = 'http://localhost:3000/spechelper/'
 
+const maxOrder = (requirements) => {
+  return requirements.length > 0
+    // Find last item and increment order by one
+    ? requirements
+      .reduce((max, requirement) =>
+        requirement['nodeOrder'] > max
+          ? requirement['nodeOrder']
+          : max, requirements[0]['nodeOrder']) + 1
+    // Return 1 for the first item
+    : 1
+}
+
 export default {
   // Add new node to the tree
-  addNode ({commit}) {
-    commit('addNode')
+  addNode ({commit, state}) {
+    commit('addNode',
+      {
+        node: new Node({parentId: state.currentNode.id})
+      }
+    )
   },
 
-  // Add a requirement to the list
-  addRequirement ({commit}) {
-    commit('addRequirement')
+  // Add a requirement to the current node
+  addRequirement ({commit, state}) {
+    commit('addRequirement',
+      {
+        requirement: new Requirement(
+          {
+            // Attach to current node
+            nodeId: state.currentNode.id,
+            // Set order to next highest number
+            nodeOrder: maxOrder(state.currentNode.requirements)
+          }
+        )
+      }
+    )
   },
 
   // Cancel edit and discard changes
@@ -99,10 +129,10 @@ export default {
       let title = {title: element.requirement}
       var result = await api.get(state.moduleName + '/loadprocs', title)
 
-      commit('addTab', {
-        title: title.title,
-        url: BASE_URL + '/loadprocs/' + result.data
-      })
+      commit('addTab', new Tab(
+        title.title,
+        BASE_URL + '/loadprocs/' + result.data
+      ))
       commit('sortTabs')
     })
   },
@@ -117,10 +147,10 @@ export default {
       let title = {title: element.requirement}
       var result = await api.get(state.moduleName + '/loadspecs', title)
 
-      commit('addTab', {
-        title: title.title,
-        url: BASE_URL + '/loadspecs/' + result.data
-      })
+      commit('addTab', new Tab(
+        title.title,
+        BASE_URL + '/loadprocs/' + result.data
+      ))
       commit('sortTabs')
     })
   },
