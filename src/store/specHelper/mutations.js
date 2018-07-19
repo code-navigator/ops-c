@@ -49,8 +49,8 @@ const maxOrder = (requirements) => {
 
 export default {
   // Add empty node as child to currently selected node
-  addNode (state) {
-    state.currentNode.children.push(
+  addNode (state, dest = state.currentNode) {
+    dest.children.push(
       new Node({parentId: state.currentNode.id})
     )
   },
@@ -86,6 +86,11 @@ export default {
     state.deletedRequirements.length = 0
   },
 
+  // Clear array of requirements
+  clearRequirements (state) {
+    state.currentNode.requirements.length = 0
+  },
+
   // Remove all tabs for viewing documents
   clearTabs (state) {
     state.tabs.length = 0
@@ -108,14 +113,10 @@ export default {
     destNode.children.push(copyOfNode)
   },
 
-  // Toggle edit mode
-  edit (state) {
-    state.isEdit = !state.isEdit
-  },
-
   // Get requirements for currently selected node
   getRequirements (state, requirements) {
     state.currentRequirement = requirements
+    state.currentNode.requirements = requirements
   },
 
   // Move node to another location in tree
@@ -222,6 +223,15 @@ export default {
       }
       return 0
     })
+  },
+
+  // Toggle edit mode
+  toggleEdit (state) {
+    state.isEdit = !state.isEdit
+  },
+
+  toggleExpandedRequirements (state) {
+    state.isExpandedRequirements = !state.isExpandedRequirements
   },
 
   // Toggle node state

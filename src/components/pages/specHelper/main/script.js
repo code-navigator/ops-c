@@ -89,8 +89,8 @@ export default {
     ...mapActions('specHelper', [
       'addRequirement',
       'cancelEdit',
-      'closeTab',
       'edit',
+      'expandRequirements',
       'openTab',
       'removeAllRequirements',
       'removeRequirement',

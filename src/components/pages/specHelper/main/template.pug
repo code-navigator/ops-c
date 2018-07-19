@@ -9,7 +9,14 @@ v-flex(style="height:100%;")
 
     //- First tab is for displaying requirements
     //- associated with selected node
-    v-tab Req.
+    v-tab Req
+    span
+      v-btn(
+        flat 
+        icon
+        @click="expandRequirements"
+      )
+        v-icon unfold_more
     v-tab-item
 
       //- Menu attached to outer container
@@ -24,7 +31,7 @@ v-flex(style="height:100%;")
         )  
           template(slot-scope="table")
             tr(
-              :class="{table, move : isEdit, selected: table.item.id === id }"
+              :class="{table, move : isEdit, selected: table.item.id === id, heading: table.item.requirement === 'Heading' }"
               :draggable="isEdit"
               :id="table.item.description"
               @change="selectRequirement(table.item)"

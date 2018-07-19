@@ -22,21 +22,6 @@ export default {
     dispatch('edit')
   },
 
-  changeTab ({ commit }, data) {
-    commit('setActiveTab', data)
-  },
-
-  closeTab ({state, commit}) {
-    setTimeout(function () {
-      state.tabs.splice(state.activeTab - 1, 1)
-      if (state.tabs.length === 0) {
-        commit('setActiveTab', 0)
-      } else {
-        commit('setActiveTab', state.activeTab - 1)
-      }
-    }, 500)
-  },
-
   // Make a copy of the current node
   copyNode ({commit}) {
     commit('copyNode')
@@ -56,10 +41,33 @@ export default {
   // Toggle the node edit mode
   // Called after a save or cancel operation
   edit ({commit}) {
-    commit('edit')
+    commit('toggleEdit')
     // Clear array containing deleted nodes and requirements
     commit('clearDeletedNodes')
     commit('clearDeletedRequirements')
+  },
+
+  async expandRequirements ({state, commit, dispatch}) {
+    commit('toggleExpandedRequirements')
+    if (!state.isEdit && state.isExpandedRequirements) {
+      // Get requirements for current node and its ancestors
+      var requirements = await api.get(state.moduleName + '/requirements/all', {id: state.currentNode.id})
+      commit('clearTabs')
+      commit('getRequirements', requirements.data)
+    } else {
+      // Get requirements for current node only
+      dispatch('getRequirements', state.currentNode)
+    }
+
+    // Remove any tabs associated with previous node
+    commit('clearTabs')
+    console.log(state.currentNode)
+    // Load specs from list of requirements
+    dispatch('loadSpecs', state.currentNode)
+    // Load procedures from list of requirements
+    dispatch('loadProcs', state.currentNode)
+    // Set active tab to first tab (tab no. 0)
+    commit('setActiveTab', 0)
   },
 
   // Get nodes to display in tree
@@ -74,6 +82,7 @@ export default {
       // Do not query database if editting, as this will overwrite changes.
       var requirements = await api.get(state.moduleName + '/requirements', {id: data.id})
       // Add requirements to displayed list
+      commit('clearRequirements')
       commit('getRequirements', requirements.data)
     } else {
       commit('getRequirements', data.requirements)

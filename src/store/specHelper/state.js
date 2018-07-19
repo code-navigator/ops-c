@@ -47,6 +47,9 @@ export default {
   // Edit mode
   isEdit: false,
 
+  // Whether requirements are expanded to include parent requirements
+  isExpandedRequirements: false,
+
   // Module of URL
   moduleName: 'spechelper',
 
