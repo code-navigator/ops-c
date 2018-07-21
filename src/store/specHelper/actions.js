@@ -127,7 +127,7 @@ export default {
     commit('setIsExpanded', !state.isExpanded)
 
     // Expand requirement only when edit mode is false
-    if (!state.isEdit) {
+    if (!state.isEdit && state.isExpanded) {
       // Get requirements for current node and its ancestors
       let requirements = await api.get(
         state.moduleName + '/requirements/all',
