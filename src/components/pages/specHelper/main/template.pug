@@ -10,7 +10,7 @@ v-flex(style="height:100%;")
     //- First tab is for displaying requirements
     //- associated with selected node
     v-tab Req
-    span
+    span(v-if="!isEdit")
       v-btn(
         flat 
         icon

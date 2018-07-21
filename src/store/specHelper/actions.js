@@ -112,13 +112,14 @@ export default {
 
   // Toggle the node edit mode
   // Called after a save or cancel operation
-  edit ({commit, state}) {
+  edit ({commit, dispatch, state}) {
     commit('setIsEdit', !state.isEdit)
     // Clear arrays containing deleted nodes and deleted requirements
     commit('clearDeletedNodes')
     commit('clearDeletedRequirements')
     // Turn off expanded requirements
     commit('setIsExpanded', false)
+    dispatch('getRequirements', state.currentNode)
   },
 
   // Pull in requirements for current node and all ancestor nodes
@@ -133,12 +134,9 @@ export default {
         state.moduleName + '/requirements/all',
         {id: state.currentNode.id}
       )
-
-      // Refresh requirements
-      dispatch('getRequirements', requirements.data)
-    } else {
-      // Get requirements for current node only
-      dispatch('getRequirements', state.currentNode)
+      commit('setRequirements', requirements.data)
+      // Retrieve documents
+      dispatch('loadDocs')
     }
   },
 
@@ -162,24 +160,29 @@ export default {
       // Add requirements to displayed list
       commit('setRequirements', requirements.data)
     } else {
+      console.log(data.requirements)
       // Reload existing requirements but do not overwrite
-      commit('setRequirements', data)
+      commit('setRequirements', data.requirements)
     }
+
     // Retrieve documents
     dispatch('loadDocs')
   },
 
   // Load procedures and specifications
-  loadDocs ({commit, dispatch}) {
+  loadDocs ({commit, dispatch, state}) {
     // Clear existing tabs
     commit('clearTabs')
     commit('setActiveTab', 0)
-    // Load specs from list of requirements
-    dispatch('loadSpecs')
-    // Load procedures from list of requirements
-    dispatch('loadProcs')
-    // Sort tabs
-    dispatch('sortTabs')
+    if (state.currentNode.requirements &&
+        state.currentNode.requirements.length > 0) {
+      // Load specs from list of requirements
+      dispatch('loadSpecs')
+      // Load procedures from list of requirements
+      dispatch('loadProcs')
+      // Sort tabs
+      dispatch('sortTabs')
+    }
   },
 
   // Load procedures associated with currently selected node
@@ -215,7 +218,7 @@ export default {
 
       commit('addTab', new Tab(
         title.title,
-        API_URL + '/loadprocs/' + result.data
+        API_URL + '/loadspecs/' + result.data
       ))
     })
   },
@@ -325,16 +328,12 @@ export default {
     commit('setIsExpanded', false)
     // Set reference to selected node
     commit('setCurrentNode', node)
-    // Display requirements for currently selected node
-    dispatch('getRequirements', node)
     // Remove any tabs associated with previous node
     commit('clearTabs')
     // Set active tab to first tab (tab no. 0)
     commit('setActiveTab', 0)
-    // Load specs from list of requirements
-    dispatch('loadSpecs', node)
-    // Load procedures from list of requirements
-    dispatch('loadProcs', node)
+    // Display requirements for currently selected node
+    dispatch('getRequirements', node)
   },
 
   // Set currently selected requirement
