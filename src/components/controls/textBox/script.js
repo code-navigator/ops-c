@@ -3,6 +3,7 @@ export default {
     'label',
     'value'
   ],
+
   computed: {
     input: {
       get () {

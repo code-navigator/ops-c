@@ -1,63 +1,75 @@
 v-container
+  //- Each control is on a separate row within grid
   v-layout(
     row
     wrap
-  ) 
+  )
+    //- Control fills row 
     v-flex(
       xs12
       class="fullSize"
-    ) 
+    )
+      //- PO types 
       dropdownList(
         :items="lists.poTypes"
         :label="'PO Type'"
         :value="selectedFilters['poType']"
         v-on:keyup="(value)=>onChange('poType', value)"
       )
+      //- Customers
       dropdownList(
         :items="lists.customers"
         :label="'Customers'"
         :value="selectedFilters['customer']"
         v-on:keyup="(value)=>onChange('customer', value)"
       )
+      //- Responsible prime customer
       dropdownList(
         :items="lists.primes"
         :label="'Prime Contractor'"
         :value="selectedFilters['prime']"
         v-on:keyup="(value)=>onChange('prime', value)"
       )
+      //- Aircraft program
       dropdownList(
         :items="lists.aircrafts"
         :label="'Aircraft Model'"
         :value="selectedFilters['aircraft']"
         v-on:keyup="(value)=>onChange('aircraft', value)"
       )
+      //- DPAS rating
       dropdownList(
         :items="lists.dpasRatings"
         :label="'DPAS Rating'"
         :value="selectedFilters['dpasRating']"
         v-on:keyup="(value)=>onChange('dpasRating', value)"
       )
+      //- Ship method
       dropdownList(
         :items="lists.shipMethods"
         :label="'Ship Method'"
         :value="selectedFilters['shipMethod']"
         v-on:keyup="(value)=>onChange('shipMethod', value)"
       )
+      //- Quote reference
       textBox(
         :label="'Quote Ref.'"
         :value="selectedFilters['quoteRef']"
         v-on:keyup="(value)=>this.onChange('quoteRef', value)"
       )
+      //- Material spec
       textBox(
         :label="'Material Specification'"
         :value="selectedFilters['materialSpec']"
         v-on:keyup="(value)=>this.onChange('materialSpec', value)"
       )
+      //- Is customer furnished material?
       checkBox(
         :label="'Cygnus Furnished Material'"
         :value="selectedFilters['furnishedMaterial']"
         v-on:keyup="(value)=>this.onChange('furnishedMaterial', value)"
       )
+      //- Return by date
       datePicker(
         :label="'Return Date'"
         :value="selectedFilters['returnDate']"

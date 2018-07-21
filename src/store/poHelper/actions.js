@@ -1,13 +1,14 @@
 import api from '@Api/api'
+import Clipboard from 'clipboard-copy'
 
 export default {
   // Copy PO notes to clipboard
-  copy ({commit}) {
-    commit('copy')
+  copy ({state}) {
+    Clipboard(state.poNotes)
   },
 
   // Retrieve lists for filter selections
-  async getAllLists ({state, commit}) {
+  async getAllLists ({commit, state}) {
     const response = await api.get(
       state.moduleName +
       '/filterlists'
@@ -17,7 +18,7 @@ export default {
   },
 
   // Send filter state to api to update PO notes
-  async getFilteredNotes ({state, dispatch}) {
+  async getFilteredNotes ({dispatch, state}) {
     await api.post(
       state.moduleName +
       '/ponotes',
@@ -28,7 +29,7 @@ export default {
   },
 
   // Get filtered PO notes
-  async getPONotes ({state, commit}) {
+  async getPONotes ({commit, state}) {
     const response = await api.get(
       state.moduleName +
       '/ponotes' +
@@ -40,12 +41,17 @@ export default {
   },
 
   // Reset store state
-  reset ({commit}) {
-    commit('reset')
+  reset ({commit, state}) {
+    // Clear each filter propery
+    for (var prop in state.selectedFilters) {
+      commit('updateSelectedFilter', {filter: prop, value: ''})
+    }
+    // Clear PO notes
+    commit('setPONotes', [])
   },
 
   // Update filter values in store
-  updateSelectedFilter ({dispatch, commit}, filter) {
+  updateSelectedFilter ({commit, dispatch}, filter) {
     commit('updateSelectedFilter', filter)
     dispatch('getFilteredNotes')
   }

@@ -1,4 +1,4 @@
-const HOST = `http://localhost:3000/`
+const API_URL = `http://localhost:3000/`
 
 export default class Url {
   constructor (subRoute, params) {
@@ -33,7 +33,7 @@ export default class Url {
   // Returns URL without query string
   getPath () {
     let subRoute = this.subRoute ? this.subRoute : ''
-    return HOST + subRoute
+    return API_URL + subRoute
   }
 
   // Returns URL with query string

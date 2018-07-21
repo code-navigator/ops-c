@@ -1,9 +1,11 @@
+//- Slide-out navigation drawer
 v-navigation-drawer(
   app
   disable-resize-watcher
   v-model = "position"
 )
   v-list
+    //- List of pages
     v-list-tile(
       :key="route.name"
       :to="route.path"

@@ -8,6 +8,7 @@ const API_URL = 'http://localhost:3000/spechelper/'
 
 // Recursive function for cloning nodes
 const cloneNode = (node, parentId) => {
+  // Create unique ID and set parent ID
   node.id = uuidv1()
   node.parentId = parentId
 
@@ -25,7 +26,7 @@ const cloneNode = (node, parentId) => {
   return node
 }
 
-// Create a new object pointer
+// Create a new object pointer (ie, copy object by value)
 const duplicateNode = (node) => {
   return JSON.parse(JSON.stringify(node))
 }
@@ -87,7 +88,9 @@ export default {
 
   // Make a copy of the current node
   copyNode ({commit}) {
+    // Clip the node
     commit('setClippedNode')
+    // And set the flag
     commit('setIsClipped', true)
   },
 
@@ -97,6 +100,7 @@ export default {
     let copyOfNode = duplicateNode(state.currentNode)
     // Clone it
     copyOfNode = cloneNode(copyOfNode, dest.id)
+    // Attach to new destination
     commit('setNode', {dest: dest, node: copyOfNode})
   },
 
@@ -113,6 +117,7 @@ export default {
     // Clear arrays containing deleted nodes and deleted requirements
     commit('clearDeletedNodes')
     commit('clearDeletedRequirements')
+    // Turn off expanded requirements
     commit('setIsExpanded', false)
   },
 
@@ -137,7 +142,7 @@ export default {
     }
   },
 
-  // Get nodes to display in tree
+  // Get nodes to display in tree (complete reset)
   async getNodes ({commit, state}) {
     var nodes = await api.get(state.moduleName + '/nodes')
     commit('setNodes', nodes.data)
@@ -146,9 +151,6 @@ export default {
 
   // Get requirements for currently selected node
   async getRequirements ({commit, dispatch, state}, data) {
-    // Clear existing requirements
-    commit('clearTabs')
-    commit('setActiveTab', 0)
     // Do not overwrite requirements if edit mode is active
     if (!state.isExpanded && (!state.isEdit ||
       (state.isEdit && state.currentNode.requirements.length === 0))) {
@@ -163,13 +165,15 @@ export default {
       // Reload existing requirements but do not overwrite
       commit('setRequirements', data)
     }
-
     // Retrieve documents
     dispatch('loadDocs')
   },
 
   // Load procedures and specifications
-  loadDocs ({dispatch}) {
+  loadDocs ({commit, dispatch}) {
+    // Clear existing tabs
+    commit('clearTabs')
+    commit('setActiveTab', 0)
     // Load specs from list of requirements
     dispatch('loadSpecs')
     // Load procedures from list of requirements
@@ -218,6 +222,7 @@ export default {
 
   // Move node in tree
   moveNodeToNewLocation ({commit, dispatch, state}, dest) {
+    // Get a clean copy of the current node
     let copyOfNode = duplicateNode(state.currentNode)
     // Clone node and change its parent ID to point to its new parent
     copyOfNode = cloneNode(copyOfNode, dest.id)
@@ -236,8 +241,11 @@ export default {
 
   // Paste copy of node at current location
   pasteInCopyOfNode ({commit, state}) {
+    // Get a clean copy of the node copy
     let copyOfNode = duplicateNode(state.clippedNode)
+    // Clone node and change its parent ID to point to its new parent (selected node)
     copyOfNode = cloneNode(copyOfNode, state.currentNode.id)
+    // Attach node
     commit('setNode', {node: copyOfNode})
   },
 
@@ -276,9 +284,10 @@ export default {
     // Find the requirement and delete it (ie., return all the other requirements)
     let requirements = state.currentNode.requirements
       .filter((requirement) => {
-        // Filter out the one requirement
+        // Filter out the one requirement with matching ID
         return requirement.id !== state.currentRequirement.id
       })
+    // Set requirements array to contain the non-matching elements
     commit('setRequirements', requirements)
   },
 
@@ -287,7 +296,8 @@ export default {
     // Get position within requirements array for the original location and the new location
     const pos1 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.source.id)
     const pos2 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.destination.id)
-
+    
+    // Get references to the requirements being swapped
     const src = state.currentNode.requirements[pos1]
     const dest = state.currentNode.requirements[pos2]
 
@@ -311,7 +321,9 @@ export default {
 
   // Set currently selected node
   selectNode ({ commit, dispatch }, node) {
+    // Turn off expanded mode when changing nodes
     commit('setIsExpanded', false)
+    // Set reference to selected node
     commit('setCurrentNode', node)
     // Display requirements for currently selected node
     dispatch('getRequirements', node)
@@ -330,10 +342,12 @@ export default {
     commit('selectRequirement', requirement)
   },
 
+  // Set index to selected tab
   setActiveTab ({commit}, tab) {
     commit('setActiveTab', tab)
   },
 
+  // Sort tabs alphabetically
   sortTabs ({commit, state}, activeTab) {
     let tabs = state.tabs.sort((tab1, tab2) => {
       if (tab1['title'] < tab2['title']) {
@@ -345,6 +359,7 @@ export default {
       return 0
     })
 
+    // Save tabs in new order
     commit('setTabs', tabs)
   },
 

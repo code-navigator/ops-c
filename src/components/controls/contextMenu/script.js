@@ -7,8 +7,8 @@ export default {
   data () {
     return {
       showMenu: false,
-      x: 0,
-      y: 0
+      x: 0, // Horizontal position of menu
+      y: 0 // Vertical position of menu
     }
   },
 
@@ -24,11 +24,6 @@ export default {
       this.$nextTick(() => {
         this.showMenu = true
       })
-    }
-  },
-  methods: {
-    action () {
-      alert('testing')
     }
   }
 }

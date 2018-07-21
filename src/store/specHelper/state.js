@@ -50,7 +50,7 @@ export default {
   // Edit mode
   isEdit: false,
 
-  // Whether requirements are expanded to include parent requirements
+  // Indicates whether requirements are expanded to include parent requirements
   isExpanded: false,
 
   // Module of URL

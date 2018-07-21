@@ -1,10 +1,13 @@
+//- Fixed toolbar at top of screen
 v-toolbar(
   app
   color="primary"
   dark
   fixed
 )
+  //- Toggles sliding in/out of navigation drawer
   v-toolbar-side-icon(
     @click.stop="toggleDrawer"
   )
+  //- Application name
   v-toolbar-title Application

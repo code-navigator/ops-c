@@ -74,6 +74,7 @@ v-flex(style="height:100%;")
                 )
 
         //- Menu structure
+        //- Attach to v-flex container
         contextMenu(
           :menuEvents="menuEvents"
           :menuItems="menuItems"
@@ -85,7 +86,6 @@ v-flex(style="height:100%;")
       v-for="(tab, index) in tabs"
     )
 
-      //- Add button for closing tab
       span {{ tab.title }}
     
     //- View documents (pdf) in iframe element

@@ -34,10 +34,12 @@ export default {
     state.tabs.length = 0
   },
 
+  // Remove requirements that are marked to be deleted
   deleteRequirement (state, requirement) {
     state.deletedRequirements.push(requirement)
   },
 
+  // Remove nodes that are marked to be deleted
   deleteNode (state, node = state.currentNode) {
     state.deletedRequirements.push(node)
   },
@@ -52,26 +54,32 @@ export default {
     state.activeTab = tab
   },
 
+  // Save copy of node
   setClippedNode (state, node = state.currentNode) {
     state.clippedNode = node
   },
 
+  // Set current node
   setCurrentNode (state, node) {
     state.currentNode = node
   },
 
+  // Indicates if copy of node is ready to be pasted
   setIsClipped (state, value) {
     state.isClipped = value
   },
 
+  // Indicates if edit mode is active
   setIsEdit (state, value) {
     state.isEdit = value
   },
 
+  // Indicates if requirements have been expanded to include parent nodes
   setIsExpanded (state, value) {
     state.isExpanded = value
   },
 
+  // Indicates if child nodes are visible
   setIsOpen (state, {node, value}) {
     node.open = value
   },
@@ -86,6 +94,7 @@ export default {
     state.nodes.children = children
   },
 
+  // Set requirement display order
   setRequirementOrder (state, {req, order}) {
     req.nodeOrder = order
   },
@@ -95,6 +104,7 @@ export default {
     state.currentNode.requirements = requirements
   },
 
+  // Set array of document tabs
   setTabs (state, tabs) {
     state.tabs = tabs
   }

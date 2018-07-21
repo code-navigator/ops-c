@@ -20,6 +20,7 @@ export default {
   },
 
   created () {
+    // Populate select lists
     this.getAllLists()
   },
 
@@ -29,6 +30,7 @@ export default {
       'updateSelectedFilter'
     ]),
 
+    // Update filter in store
     onChange (filter, value) {
       this.updateSelectedFilter({
         filter: filter,

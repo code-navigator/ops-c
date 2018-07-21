@@ -1,16 +1,14 @@
-import { mapState, mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapState } from 'vuex'
 import contextMenu from '@Controls/contextMenu/index'
 import tree from '@Controls/tree/index'
 
 export default {
-  // Load custom components
   components: {
     contextMenu: contextMenu,
     tree: tree
   },
 
   computed: {
-    // State variables
     ...mapState('specHelper', [
       'isClipped',
       'isEdit',
@@ -21,7 +19,6 @@ export default {
       'currentNodeId'
     ]),
 
-    // Define context menu options
     menuItems () {
       return [
         {
@@ -129,11 +126,11 @@ export default {
     },
 
     expandNode (state) {
-      this.$store.dispatch('specHelper/toggleNode', true)
+      this.toggleNode(true)
     },
 
     collapseNode (state) {
-      this.$store.dispatch('specHelper/toggleNode', false)
+      this.toggleNode(false)
     }
   }
 }

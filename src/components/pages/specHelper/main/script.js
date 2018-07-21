@@ -3,13 +3,11 @@ import dataTable from '@Controls/dataTable/index'
 import contextMenu from '@Controls/contextMenu/index'
 
 export default {
-  // Load custom components
   components: {
     dataTable: dataTable,
     contextMenu: contextMenu
   },
 
-  // Load store data
   computed: {
     ...mapState('specHelper', [
       'headers',
@@ -18,6 +16,7 @@ export default {
       'activeTab',
       'tabs'
     ]),
+
     ...mapGetters('specHelper', {
       id: 'currentRequirementId',
       items: 'requirements'
@@ -32,7 +31,6 @@ export default {
       }
     },
 
-    // Define context menu options
     menuItems () {
       return [
         {
@@ -76,7 +74,6 @@ export default {
     }
   },
 
-  // Local data
   data () {
     return {
       destination: Object, // Element for dropping dragged element
