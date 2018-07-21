@@ -1,37 +1,3 @@
-import Tab from '@Models/Tab'
-import uuidv1 from 'uuid/v1'
-
-// Recursive function for cloning nodes
-const cloneNode = (node, parentId) => {
-  node.id = uuidv1()
-  node.parentId = parentId
-
-  // Clone requirements
-  for (var i = 0; i < node.requirements.length; i++) {
-    node.requirements[i].id = uuidv1()
-    node.requirements[i].nodeId = node.id
-  }
-
-  // Clone child nodes
-  for (var j = 0; j < node.children.length; j++) {
-    node.children[j] = cloneNode(node.children[j], node.id)
-  }
-
-  return node
-}
-
-// Create a new object pointer
-const duplicateNode = (node) => {
-  return JSON.parse(JSON.stringify(node))
-}
-
-// Find array index that matches requirement id
-const getIndexOfMatchingRequirementId = (requirements, id) => {
-  return requirements
-    .map((requirement) => { return requirement['id'] })
-    .indexOf(id)
-}
-
 export default {
   // Add empty node as child to currently selected node
   addNode (state, {dest = state.currentNode, node}) {
@@ -68,104 +34,12 @@ export default {
     state.tabs.length = 0
   },
 
-  // Make a copy of the current node
-  copyNode (state) {
-    state.clippedNode = duplicateNode(state.currentNode)
-    state.nodeIsClipped = true
+  deleteRequirement (state, requirement) {
+    state.deletedRequirements.push(requirement)
   },
 
-  // Copy node to another location in tree
-  copyNodeToNewLocation (state, destNode) {
-    console.log(destNode)
-    // Get a clean copy of the current node
-    let copyOfNode = duplicateNode(state.currentNode)
-    // Clone it
-    copyOfNode = cloneNode(copyOfNode, destNode.id)
-    // Attach it the destination node
-    destNode.children.push(copyOfNode)
-  },
-
-  // Get requirements for currently selected node
-  getRequirements (state, requirements) {
-    state.currentRequirement = requirements
-    state.currentNode.requirements = requirements
-  },
-
-  // Move node to another location in tree
-  moveNodeToNewLocation (state, destNode) {
-    let copyOfNode = duplicateNode(state.currentNode)
-    // Clone node and change its parent ID to point to its new parent
-    copyOfNode = cloneNode(copyOfNode, destNode.id)
-    // Attach the node to its new parent
-    destNode.children.push(copyOfNode)
-  },
-
-  // Paste a copy of the node (branch) into the tree
-  pasteInCopyOfNode (state) {
-    let copyOfNode = duplicateNode(state.clippedNode)
-    copyOfNode = cloneNode(copyOfNode, state.currentNode.id)
-    state.currentNode.children.push(copyOfNode)
-  },
-
-  // Remove currently selected node from tree
-  removeNode (state) {
-    // Function to remove node
-    const removeNode = (parentNode, id) => {
-      parentNode.children = parentNode.children
-        // Return array with all children except for the one being removed
-        .filter((child) => { return child.id !== id })
-        // Repeat for each child, grandchild, ...
-        .map((child) => { return removeNode(child, id) })
-      return parentNode
-    }
-    // Add node to list of nodes being deleted during the current edit session
-    state.deletedNodes.push(state.currentNode)
-    // Call function to remove selected node
-    removeNode(state.nodes, state.currentNode.id)
-  },
-
-  // Delete requirement from list
-  removeRequirement (state) {
-    // Add to the list of requirements to be deleted
-    state.deletedRequirements.push(state.currentRequirement)
-    // Find the requirement and delete it (ie., return all the other requirements)
-    state.currentNode.requirements = state.currentNode.requirements
-      .filter((requirement) => {
-        // Filter out the one requirement
-        return requirement.id !== state.currentRequirement.id
-      })
-  },
-
-  // Delete all requirements from list
-  removeAllRequirements (state) {
-    // Add requirements to the list of deleted requirements
-    state.currentNode.requirements.forEach((requirement) => {
-      state.deletedRequirements.push(requirement)
-    })
-
-    // Empty requirements array
-    state.currentNode.requirements.length = 0
-  },
-
-  // Reorder requirements (drag and drop)
-  reorderRequirements (state, data) {
-    // Get position within requirements array for the original location and the new location
-    const pos1 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.source.id)
-    const pos2 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.destination.id)
-
-    // Swap orders to change sort order
-    const temp = state.currentNode.requirements[pos1].nodeOrder
-    state.currentNode.requirements[pos1].nodeOrder = state.currentNode.requirements[pos2].nodeOrder
-    state.currentNode.requirements[pos2].nodeOrder = temp
-  },
-
-  // Set currently selected node
-  selectNode (state, node) {
-    if (!state.requirementIsEdit) {
-      // Display requirements from server if not in edit mode
-      node.requirements = state.currentRequirement
-    }
-    state.currentNode = node
+  deleteNode (state, node = state.currentNode) {
+    state.deletedRequirements.push(node)
   },
 
   // Set currently selected requirement
@@ -174,49 +48,54 @@ export default {
   },
 
   // Set currently selected  tab
-  setActiveTab (state, activeTab) {
-    state.activeTab = activeTab
+  setActiveTab (state, tab) {
+    state.activeTab = tab
+  },
+
+  setClippedNode (state, node = state.currentNode) {
+    state.clippedNode = node
+  },
+
+  setCurrentNode (state, node) {
+    state.currentNode = node
+  },
+
+  setIsClipped (state, value) {
+    state.isClipped = value
+  },
+
+  setIsEdit (state, value) {
+    state.isEdit = value
+  },
+
+  setIsExpanded (state, value) {
+    state.isExpanded = value
+  },
+
+  setIsOpen (state, {node, value}) {
+    node.open = value
+  },
+
+  // Attach node
+  setNode (state, {dest = state.currentNode, node}) {
+    dest.children.push(node)
   },
 
   // Set tree state
   setNodes (state, children) {
     state.nodes.children = children
-    state.currentNode = state.nodes
   },
 
-  // Sort tabs by title
-  sortTabs (state) {
-    state.tabs = state.tabs.sort((tab1, tab2) => {
-      if (tab1['title'] < tab2['title']) {
-        return -1
-      }
-      if (tab1['title'] > tab2['title']) {
-        return 1
-      }
-      return 0
-    })
+  setRequirementOrder (state, {req, order}) {
+    req.nodeOrder = order
   },
 
-  // Toggle edit mode
-  toggleEdit (state) {
-    state.isEdit = !state.isEdit
+  // Get requirements for currently selected node
+  setRequirements (state, requirements) {
+    state.currentNode.requirements = requirements
   },
 
-  toggleExpandedRequirements (state) {
-    state.isExpandedRequirements = !state.isExpandedRequirements
-  },
-
-  // Toggle node state
-  toggleNode (state, isVisible) {
-    // Toggle on/off the visibility of all child nodes
-    const toggleNode = (parentNode, isVisible) => {
-      parentNode.open = isVisible
-
-      for (var i = 0; i < parentNode.children.length; i++) {
-        toggleNode(parentNode.children[i], isVisible)
-      }
-    }
-
-    toggleNode(state.currentNode, isVisible)
+  setTabs (state, tabs) {
+    state.tabs = tabs
   }
 }

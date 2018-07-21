@@ -44,17 +44,17 @@ export default {
     }
   ],
 
+  // Node is on clipboard ready to be pasted
+  isClipped: false,
+
   // Edit mode
   isEdit: false,
 
   // Whether requirements are expanded to include parent requirements
-  isExpandedRequirements: false,
+  isExpanded: false,
 
   // Module of URL
   moduleName: 'spechelper',
-
-  // Node is on clipboard ready to be pasted
-  nodeIsClipped: false,
 
   // Base tree structure
   nodes: {

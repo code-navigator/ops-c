@@ -12,9 +12,9 @@ export default {
   computed: {
     // State variables
     ...mapState('specHelper', [
-      'nodes',
+      'isClipped',
       'isEdit',
-      'nodeIsClipped'
+      'nodes'
     ]),
 
     ...mapGetters('specHelper', [
@@ -55,13 +55,13 @@ export default {
           title: 'Cut',
           handler: this.cutNode,
           show: this.isEdit,
-          separator: !this.nodeIsClipped
+          separator: !this.isClipped
         },
         {
           title: 'Paste',
           handler: this.pasteInCopyOfNode,
-          show: (this.isEdit && this.nodeIsClipped),
-          separator: this.nodeIsClipped
+          show: (this.isEdit && this.isClipped),
+          separator: this.isClipped
         },
         {
           title: 'Add',
