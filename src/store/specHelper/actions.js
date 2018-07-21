@@ -296,7 +296,7 @@ export default {
     // Get position within requirements array for the original location and the new location
     const pos1 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.source.id)
     const pos2 = getIndexOfMatchingRequirementId(state.currentNode.requirements, data.destination.id)
-    
+
     // Get references to the requirements being swapped
     const src = state.currentNode.requirements[pos1]
     const dest = state.currentNode.requirements[pos2]
