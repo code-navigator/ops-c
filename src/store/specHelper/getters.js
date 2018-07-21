@@ -25,7 +25,8 @@ export default {
 
   // Return sorted array of requirements
   requirements (state) {
-    if (state.currentNode.requirements) {
+    if (state.currentNode.requirements &&
+        state.currentNode.requirements.length > 0) {
       return sortArray(state.currentNode.requirements, 'nodeOrder')
     }
   }
