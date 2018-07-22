@@ -113,13 +113,14 @@ export default {
   // Toggle the node edit mode
   // Called after a save or cancel operation
   edit ({commit, dispatch, state}) {
-    commit('setIsEdit', !state.isEdit)
     // Clear arrays containing deleted nodes and deleted requirements
     commit('clearDeletedNodes')
     commit('clearDeletedRequirements')
     // Turn off expanded requirements
     commit('setIsExpanded', false)
     dispatch('getRequirements', state.currentNode)
+    // Set edit mode after getting requirements
+    commit('setIsEdit', !state.isEdit)
   },
 
   // Pull in requirements for current node and all ancestor nodes
@@ -160,7 +161,6 @@ export default {
       // Add requirements to displayed list
       commit('setRequirements', requirements.data)
     } else {
-      console.log(data.requirements)
       // Reload existing requirements but do not overwrite
       commit('setRequirements', data.requirements)
     }
@@ -323,9 +323,11 @@ export default {
   },
 
   // Set currently selected node
-  selectNode ({ commit, dispatch }, node) {
+  selectNode ({ commit, dispatch, state }, node) {
     // Turn off expanded mode when changing nodes
     commit('setIsExpanded', false)
+    // Select requirements for active node only before changing nodes
+    dispatch('getRequirements', state.currentNode)
     // Set reference to selected node
     commit('setCurrentNode', node)
     // Remove any tabs associated with previous node
