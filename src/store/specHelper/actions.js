@@ -5,6 +5,7 @@ import Tab from '@Models/Tab'
 import uuidv1 from 'uuid/v1'
 
 const API_URL = 'http://localhost:3000/spechelper/'
+let debounce = false
 
 // Recursive function for cloning nodes
 const cloneNode = (node, parentId) => {
@@ -138,6 +139,9 @@ export default {
       commit('setRequirements', requirements.data)
       // Retrieve documents
       dispatch('loadDocs')
+    } else {
+      dispatch('getRequirements', state.currentNode )
+      dispatch('loadDocs')
     }
   },
 
@@ -188,7 +192,7 @@ export default {
   // Load procedures associated with currently selected node
   async loadProcs ({commit, state}) {
     // Filter requirements to include only those with a description of PROC
-    let procs = state.currentNode.requirements.filter(requirement => {
+    let procs = await state.currentNode.requirements.filter(requirement => {
       return requirement.description === 'PROC'
     })
 
@@ -196,7 +200,6 @@ export default {
     procs.forEach(async (doc) => {
       let title = {title: doc.requirement}
       var result = await api.get(state.moduleName + '/loadprocs', title)
-
       commit('addTab', new Tab(
         title.title,
         API_URL + '/loadprocs/' + result.data
@@ -207,7 +210,7 @@ export default {
   // Load specifications associated with currently selected node
   async loadSpecs ({commit, state}) {
     // Filter requirements to include only those with a description of SPEC
-    let specs = state.currentNode.requirements.filter(requirement => {
+    let specs = await state.currentNode.requirements.filter(requirement => {
       return requirement.description === 'SPEC'
     })
 
@@ -324,18 +327,24 @@ export default {
 
   // Set currently selected node
   selectNode ({ commit, dispatch, state }, node) {
-    // Turn off expanded mode when changing nodes
-    commit('setIsExpanded', false)
-    // Select requirements for active node only before changing nodes
-    dispatch('getRequirements', state.currentNode)
-    // Set reference to selected node
-    commit('setCurrentNode', node)
-    // Remove any tabs associated with previous node
-    commit('clearTabs')
-    // Set active tab to first tab (tab no. 0)
-    commit('setActiveTab', 0)
-    // Display requirements for currently selected node
-    dispatch('getRequirements', node)
+    if (!debounce) {
+      debounce = true
+      // Turn off expanded mode when changing nodes
+      commit('setIsExpanded', false)
+      if (node !== state.currentNode) {
+        // Select requirements for active node only before changing nodes
+        dispatch('getRequirements', state.currentNode)
+      }
+      // Set reference to selected node
+      commit('setCurrentNode', node)
+      // Remove any tabs associated with previous node
+      commit('clearTabs')
+      // Set active tab to first tab (tab no. 0)
+      commit('setActiveTab', 0)
+      // Display requirements for currently selected node
+      dispatch('getRequirements', node)
+      setTimeout(() => { debounce = false }, 500)
+    }
   },
 
   // Set currently selected requirement
