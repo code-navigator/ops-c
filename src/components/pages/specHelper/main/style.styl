@@ -1,34 +1,44 @@
-.table .move
-  cursor: move
+// .table .move
+//   cursor: move
 
-.v-tabs, .v-tabs__items
-  height: 100%
+// .v-tabs, .v-tabs__items
+//   height: 100%
 
+// Remove line from beneath grid cells
 .table .v-input__slot::before
   display: none
 
+// Remove line from beneath rows
 .theme--light .v-table tbody tr:not(:last-child) 
   border-bottom: none
 
+// Do not obscure text in cells
 .v-textarea textarea
   padding: 0px
 
+// Center number under heading
 .node-order
   text-align: center
 
-.v-btn--floating.v-btn--small
-  height: 20px
-  width: 20px
+// .v-btn--floating.v-btn--small
+//   height: 20px
+//   width: 20px
 
-.table a
-  font-size: 16px
+// .table a
+//   font-size: 16px
 
+// Highlight selected requirement
 tbody tr.table.selected, tbody tr.table.selected:hover
   background-color: #ACCEF7 !important
 
+// Style heading when pulling in parent node requirements
 #Heading
   background-color:#f7f5e6
   font-style: italic
 
 #Heading td
   font-weight: 700
+
+
+// .v-tabs__items
+//   overflow: auto
