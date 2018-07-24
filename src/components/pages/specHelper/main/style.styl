@@ -1,8 +1,9 @@
 // .table .move
 //   cursor: move
 
-// .v-tabs, .v-tabs__items
-//   height: 100%
+// Show documents in full-size window
+.v-tabs, .v-tabs__items
+  height: 100%
 
 // Remove line from beneath grid cells
 .table .v-input__slot::before
@@ -21,11 +22,12 @@
   text-align: center
 
 // .v-btn--floating.v-btn--small
-//   height: 20px
-//   width: 20px
+//   height: 10px
+//   width: 10px
 
-// .table a
-//   font-size: 16px
+// Show links in the same font size as the rest of the text
+.table a
+  font-size: 16px
 
 // Highlight selected requirement
 tbody tr.table.selected, tbody tr.table.selected:hover
@@ -39,6 +41,6 @@ tbody tr.table.selected, tbody tr.table.selected:hover
 #Heading td
   font-weight: 700
 
-
-// .v-tabs__items
-//   overflow: auto
+// Allow scrolling of requirements windows
+.v-tabs__items
+  overflow: auto
