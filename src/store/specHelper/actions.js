@@ -1,3 +1,5 @@
+'use strict'
+
 import api from '@Api/api'
 import Node from '@Models/Node'
 import Requirement from '@Models/Requirement'
@@ -26,16 +28,10 @@ const cloneNode = (node, parentId) => {
   return node
 }
 
-// Create a new object pointer (ie, copy object by value)
-const duplicateNode = (node) => {
-  return JSON.parse(JSON.stringify(node))
-}
-
 // Find array index that matches requirement id
 const getIndexOfMatchingRequirementId = (requirements, id) => {
   return requirements
-    .map((requirement) => { return requirement['id'] })
-    .indexOf(id)
+    .findIndex((requirement) => { return requirement.id === id })
 }
 
 // Get the next line number in the requirements table
@@ -110,7 +106,7 @@ export default {
   // Copy node in tree
   copyNodeToNewLocation ({commit, state}, dest) {
     // Get a clean copy of the current node
-    let copyOfNode = duplicateNode(state.currentNode)
+    let copyOfNode = {...state.currentNode}
     // Clone it
     copyOfNode = cloneNode(copyOfNode, dest.id)
     // Attach to new destination
@@ -142,7 +138,6 @@ export default {
   async expandRequirements ({commit, dispatch, state}) {
     // Toggle flag for expanding requirements to include parent nodes
     commit('setIsExpanded', !state.isExpanded)
-
     // Expand requirement only when edit mode is false
     if (!state.isEdit && state.isExpanded) {
       // Get requirements for current node and its ancestors
@@ -209,7 +204,7 @@ export default {
     }
 
     // Return specs and procedures as a single array
-    return specTabs.concat(procTabs)
+    return [...specTabs, ...procTabs]
   },
 
   // Load procedures associated with currently selected node
@@ -256,7 +251,7 @@ export default {
   // Move node in tree
   moveNodeToNewLocation ({commit, dispatch, state}, dest) {
     // Get a clean copy of the current node
-    let copyOfNode = duplicateNode(state.currentNode)
+    let copyOfNode = {...state.currentNode}
     // Clone node and change its parent ID to point to its new parent
     copyOfNode = cloneNode(copyOfNode, dest.id)
     // Attach the node to its new parent
@@ -276,7 +271,7 @@ export default {
   // Paste copy of node at current location
   pasteInCopyOfNode ({commit, state}) {
     // Get a clean copy of the node copy
-    let copyOfNode = duplicateNode(state.clippedNode)
+    let copyOfNode = {...state.clippedNode}
     // Clone node and change its parent ID to point to its new parent (selected node)
     copyOfNode = cloneNode(copyOfNode, state.currentNode.id)
     // Attach node
