@@ -5,7 +5,6 @@ import Tab from '@Models/Tab'
 import uuidv1 from 'uuid/v1'
 
 const API_URL = 'http://localhost:3000/spechelper/'
-let debounce = false
 
 // Recursive function for cloning nodes
 const cloneNode = (node, parentId) => {
@@ -52,6 +51,19 @@ const maxOrder = (requirements) => {
     : 1
 }
 
+// Sort tabs alphabetically
+const sortTabs = (tabs) => {
+  return tabs.sort((tab1, tab2) => {
+    if (tab1['title'] < tab2['title']) {
+      return -1
+    }
+    if (tab1['title'] > tab2['title']) {
+      return 1
+    }
+    return 0
+  })
+}
+
 export default {
   // Add new node to the tree
   addNode ({commit, state}) {
@@ -84,7 +96,7 @@ export default {
     dispatch('edit')
     // Reload tree (nodes and requirements)
     dispatch('getNodes')
-    dispatch('getRequirements', state.nodes)
+    dispatch('selectNode', state.currentNode)
   },
 
   // Make a copy of the current node
@@ -113,35 +125,42 @@ export default {
 
   // Toggle the node edit mode
   // Called after a save or cancel operation
-  edit ({commit, dispatch, state}) {
+  async edit ({commit, dispatch, state}) {
     // Clear arrays containing deleted nodes and deleted requirements
     commit('clearDeletedNodes')
     commit('clearDeletedRequirements')
     // Turn off expanded requirements
     commit('setIsExpanded', false)
-    dispatch('getRequirements', state.currentNode)
+    let requirements = await dispatch('getRequirements', state.currentNode)
+    commit('setRequirements', requirements)
     // Set edit mode after getting requirements
     commit('setIsEdit', !state.isEdit)
   },
 
   // Pull in requirements for current node and all ancestor nodes
   async expandRequirements ({commit, dispatch, state}) {
+    let requirements
+
     // Toggle flag for expanding requirements to include parent nodes
     commit('setIsExpanded', !state.isExpanded)
 
     // Expand requirement only when edit mode is false
     if (!state.isEdit && state.isExpanded) {
       // Get requirements for current node and its ancestors
-      let requirements = await api.get(
+      requirements = await api.get(
         state.moduleName + '/requirements/all',
         {id: state.currentNode.id}
       )
       commit('setRequirements', requirements.data)
-      // Retrieve documents
-      dispatch('loadDocs')
+      let tabs = await dispatch('loadDocs', requirements.data)
+      tabs = sortTabs(tabs)
+      commit('setTabs', tabs)
     } else {
-      dispatch('getRequirements', state.currentNode )
-      dispatch('loadDocs')
+      requirements = await dispatch('getRequirements', state.currentNode)
+      commit('setRequirements', requirements)
+      let tabs = await dispatch('loadDocs', requirements)
+      tabs = sortTabs(tabs)
+      commit('setTabs', tabs)
     }
   },
 
@@ -162,68 +181,67 @@ export default {
         state.moduleName + '/requirements',
         {id: data.id}
       )
-      // Add requirements to displayed list
-      commit('setRequirements', requirements.data)
+      return requirements.data
     } else {
       // Reload existing requirements but do not overwrite
-      commit('setRequirements', data.requirements)
+      return data.requirements
     }
-
-    // Retrieve documents
-    dispatch('loadDocs')
   },
 
   // Load procedures and specifications
-  loadDocs ({commit, dispatch, state}) {
+  async loadDocs ({commit, dispatch, state}, requirements) {
     // Clear existing tabs
     commit('clearTabs')
     commit('setActiveTab', 0)
     if (state.currentNode.requirements &&
         state.currentNode.requirements.length > 0) {
       // Load specs from list of requirements
-      dispatch('loadSpecs')
-      // Load procedures from list of requirements
-      dispatch('loadProcs')
-      // Sort tabs
-      dispatch('sortTabs')
+      var specTabs = await dispatch('loadSpecs', requirements)
+      var procTabs = await dispatch('loadProcs', requirements)
     }
+
+    return specTabs.concat(procTabs)
   },
 
   // Load procedures associated with currently selected node
-  async loadProcs ({commit, state}) {
+  async loadProcs ({state}, requirements) {
+    let procTabs = []
+
     // Filter requirements to include only those with a description of PROC
-    let procs = await state.currentNode.requirements.filter(requirement => {
+    let procs = await requirements.filter(requirement => {
       return requirement.description === 'PROC'
     })
 
     // Create a tab for each PROC in the list
-    procs.forEach(async (doc) => {
+    await Promise.all(procs.map(async (doc) => {
       let title = {title: doc.requirement}
       var result = await api.get(state.moduleName + '/loadprocs', title)
-      commit('addTab', new Tab(
+      procTabs.push(new Tab(
         title.title,
         API_URL + '/loadprocs/' + result.data
       ))
-    })
+    }))
+    return procTabs
   },
 
   // Load specifications associated with currently selected node
-  async loadSpecs ({commit, state}) {
+  async loadSpecs ({state}, requirements) {
+    let specTabs = []
+
     // Filter requirements to include only those with a description of SPEC
-    let specs = await state.currentNode.requirements.filter(requirement => {
+    let specs = await requirements.filter(requirement => {
       return requirement.description === 'SPEC'
     })
-
     // Create a tab for each SPEC in the list
-    specs.forEach(async (doc) => {
+    await Promise.all(specs.map(async (doc) => {
       let title = {title: doc.requirement}
       var result = await api.get(state.moduleName + '/loadspecs', title)
-
-      commit('addTab', new Tab(
+      specTabs.push(new Tab(
         title.title,
         API_URL + '/loadspecs/' + result.data
       ))
-    })
+    }))
+    return specTabs
   },
 
   // Move node in tree
@@ -326,25 +344,27 @@ export default {
   },
 
   // Set currently selected node
-  selectNode ({ commit, dispatch, state }, node) {
-    if (!debounce) {
-      debounce = true
+  async selectNode ({ commit, dispatch, state }, node) {
+
+    if (node !== state.currentNode && state.isExpanded) {
+      // Select requirements for active node only before changing nodes
+      let oldRequirements = await dispatch('getRequirements', state.currentNode)
+      commit('setRequirements', oldRequirements)
+      let tabs = await dispatch('loadDocs', oldRequirements)
+      tabs = sortTabs(tabs)
+      commit('setTabs', tabs)
       // Turn off expanded mode when changing nodes
       commit('setIsExpanded', false)
-      if (node !== state.currentNode) {
-        // Select requirements for active node only before changing nodes
-        dispatch('getRequirements', state.currentNode)
-      }
-      // Set reference to selected node
-      commit('setCurrentNode', node)
-      // Remove any tabs associated with previous node
-      commit('clearTabs')
-      // Set active tab to first tab (tab no. 0)
-      commit('setActiveTab', 0)
-      // Display requirements for currently selected node
-      dispatch('getRequirements', node)
-      setTimeout(() => { debounce = false }, 500)
     }
+
+    // Set reference to selected node
+    commit('setCurrentNode', node)
+    let newRequirements = await dispatch('getRequirements', state.currentNode)
+    commit('setRequirements', newRequirements)
+    let tabs = await dispatch('loadDocs', await newRequirements)
+
+    tabs = sortTabs(tabs)
+    commit('setTabs', tabs)
   },
 
   // Set currently selected requirement
@@ -355,22 +375,6 @@ export default {
   // Set index to selected tab
   setActiveTab ({commit}, tab) {
     commit('setActiveTab', tab)
-  },
-
-  // Sort tabs alphabetically
-  sortTabs ({commit, state}, activeTab) {
-    let tabs = state.tabs.sort((tab1, tab2) => {
-      if (tab1['title'] < tab2['title']) {
-        return -1
-      }
-      if (tab1['title'] > tab2['title']) {
-        return 1
-      }
-      return 0
-    })
-
-    // Save tabs in new order
-    commit('setTabs', tabs)
   },
 
   // Toggle Nodes to show children
