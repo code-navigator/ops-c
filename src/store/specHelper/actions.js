@@ -51,7 +51,7 @@ const maxOrder = (requirements) => {
     : 1
 }
 
-// Sort tabs alphabetically
+// Sort tabs alphanumerically
 const sortTabs = (tabs) => {
   return tabs.sort((tab1, tab2) => {
     if (tab1['title'] < tab2['title']) {
@@ -74,7 +74,7 @@ export default {
     )
   },
 
-  // Add a requirement to the current node
+  // Add new requirement to the current node
   addRequirement ({commit, state}) {
     commit('addRequirement',
       {
@@ -131,7 +131,8 @@ export default {
     commit('clearDeletedRequirements')
     // Turn off expanded requirements
     commit('setIsExpanded', false)
-    let requirements = await dispatch('getRequirements', state.currentNode)
+    // Refresh requirements for current node
+    const requirements = await dispatch('getRequirements', state.currentNode)
     commit('setRequirements', requirements)
     // Set edit mode after getting requirements
     commit('setIsEdit', !state.isEdit)
@@ -139,25 +140,26 @@ export default {
 
   // Pull in requirements for current node and all ancestor nodes
   async expandRequirements ({commit, dispatch, state}) {
-    let requirements
-
     // Toggle flag for expanding requirements to include parent nodes
     commit('setIsExpanded', !state.isExpanded)
 
     // Expand requirement only when edit mode is false
     if (!state.isEdit && state.isExpanded) {
       // Get requirements for current node and its ancestors
-      requirements = await api.get(
+      let requirements = await api.get(
         state.moduleName + '/requirements/all',
         {id: state.currentNode.id}
       )
       commit('setRequirements', requirements.data)
+      // Get and sort document tabs for current node and its ancestors
       let tabs = await dispatch('loadDocs', requirements.data)
       tabs = sortTabs(tabs)
       commit('setTabs', tabs)
     } else {
-      requirements = await dispatch('getRequirements', state.currentNode)
+      // Get requirements for current node only
+      let requirements = await dispatch('getRequirements', state.currentNode)
       commit('setRequirements', requirements)
+      // Get and sort document tabs for current node and its ancestors
       let tabs = await dispatch('loadDocs', requirements)
       tabs = sortTabs(tabs)
       commit('setTabs', tabs)
@@ -190,16 +192,23 @@ export default {
 
   // Load procedures and specifications
   async loadDocs ({commit, dispatch, state}, requirements) {
+    let specTabs = []
+    let procTabs = []
+
     // Clear existing tabs
     commit('clearTabs')
     commit('setActiveTab', 0)
+    // Get documents (ie, specs and procedures)
     if (state.currentNode.requirements &&
         state.currentNode.requirements.length > 0) {
-      // Load specs from list of requirements
-      var specTabs = await dispatch('loadSpecs', requirements)
-      var procTabs = await dispatch('loadProcs', requirements)
+      // Load specs and procedures in parallel
+      [specTabs, procTabs] = await Promise.all([
+        dispatch('loadSpecs', requirements),
+        dispatch('loadProcs', requirements)
+      ])
     }
 
+    // Return specs and procedures as a single array
     return specTabs.concat(procTabs)
   },
 
@@ -258,6 +267,7 @@ export default {
 
   // Open tab linked to current requirement
   openTab ({commit, state}, title) {
+    // Search for tab by title
     let tab = state.tabs.map((item) => { return item['title'] })
       .indexOf(title) + 1
     commit('setActiveTab', tab)
@@ -333,23 +343,26 @@ export default {
 
   // Persist changes to the database
   async save ({state, commit, dispatch}) {
-    // Insert changes to database
-    await api.put(state.moduleName + '/nodes', state.nodes.children)
-    // Remove deleted nodes from database
-    await api.delete(state.moduleName + '/nodes', state.deletedNodes)
-    // Remove deleted requirements from database
-    await api.delete(state.moduleName + '/requirements', state.deletedRequirements)
+    await Promise.all([
+      // Insert changes to database
+      api.put(state.moduleName + '/nodes', state.nodes.children),
+      // Remove deleted nodes from database
+      api.delete(state.moduleName + '/nodes', state.deletedNodes),
+      // Remove deleted requirements from database
+      api.delete(state.moduleName + '/requirements', state.deletedRequirements)
+    ])
     // Toggle edit mode
     dispatch('edit')
   },
 
   // Set currently selected node
   async selectNode ({ commit, dispatch, state }, node) {
-
+    // If changing node while state is expanded
     if (node !== state.currentNode && state.isExpanded) {
-      // Select requirements for active node only before changing nodes
+      // Refresh requirements for active node before changing nodes
       let oldRequirements = await dispatch('getRequirements', state.currentNode)
       commit('setRequirements', oldRequirements)
+      // Get and sort tabs
       let tabs = await dispatch('loadDocs', oldRequirements)
       tabs = sortTabs(tabs)
       commit('setTabs', tabs)
@@ -359,10 +372,11 @@ export default {
 
     // Set reference to selected node
     commit('setCurrentNode', node)
+    // Retrieve requirements for the newly selected node
     let newRequirements = await dispatch('getRequirements', state.currentNode)
     commit('setRequirements', newRequirements)
+    // Get and sort tabs
     let tabs = await dispatch('loadDocs', await newRequirements)
-
     tabs = sortTabs(tabs)
     commit('setTabs', tabs)
   },
