@@ -1,6 +1,6 @@
-import { createLocalVue, shallowMount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
 import { TestHelpers } from './../testHelpers'
-import hello from './../../../src/components/controls/hello'
+import checkBox from './../../../src/components/controls/checkBox'
 import Vuetify from 'vuetify'
 import Vuex from 'vuex'
 
@@ -12,12 +12,18 @@ describe('test.vue', () => {
   let h
   let store
   let wrapper
+  const label = 'some label'
+  const value = false
 
   beforeEach(() => {
     store = new Vuex.Store({})
-    wrapper = shallowMount(hello, {
+    wrapper = mount(checkBox, {
       localVue,
-      store
+      store,
+      propsData: {
+        label,
+        value
+      }
     })
     h = new TestHelpers(wrapper, expect)
     jest.resetModules()
@@ -28,18 +34,17 @@ describe('test.vue', () => {
     h.isInstance()
   })
 
-  it('should include a message', () => {
-    h.hasText('Hello')
-  })
-
   it('should render correctly', () => {
     h.renders()
   })
 
-  it('should trigger click event', () => {
-    h.click('button')
-    h.hasSelectorWithText('#output', '1')
-    h.click('button')
-    h.hasDataPropWithValue('number', 2)
+  it('should display a label', () => {
+    h.hasText(label)
+  })
+
+  it('should reflect current state of value prop', async () => {
+    h.hasDataPropWithValue('value', false)
+    await h.click('input')
+    h.hasDataPropWithValue('value', false)
   })
 })
