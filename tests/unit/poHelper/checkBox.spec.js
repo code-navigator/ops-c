@@ -42,9 +42,15 @@ describe('test.vue', () => {
     h.hasText(label)
   })
 
-  it('should reflect current state of value prop', async () => {
-    h.hasDataPropWithValue('value', false)
-    await h.click('input')
-    h.hasDataPropWithValue('value', false)
+  it('should change state when clicked', () => {
+    h.hasText('false')
+    h.click('input')
+    h.hasText('true')
+  })
+
+  it('should emit a "keyup" event when clicked', () => {
+    h.noEmits('keyup')
+    h.click('input')
+    h.emits('keyup')
   })
 })

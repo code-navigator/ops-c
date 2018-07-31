@@ -5,8 +5,11 @@ export class TestHelpers {
   }
 
   click (selector) {
-    console.log(this.wrapper.find(selector).html())
     this.wrapper.find(selector).trigger('click')
+  }
+
+  emits (event) {
+    this.expect(this.wrapper.emitted(event)).toBeTruthy()
   }
 
   hasDataPropWithValue (property, value) {
@@ -25,6 +28,10 @@ export class TestHelpers {
 
   isInstance () {
     this.expect(this.wrapper.isVueInstance()).toBeTruthy()
+  }
+
+  noEmits (event) {
+    this.expect(this.wrapper.emitted(event)).toBeUndefined()
   }
 
   renders () {
