@@ -6,12 +6,13 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "unit": "vue-cli-service test:unit --no-cache",
+    "test": "vue-cli-service test:unit --no-cache",
     "test:e2e": "vue-cli-service test:e2e"
   },
   "dependencies": {
     "axios": "^0.18.0",
     "clipboard-copy": "^2.0.0",
+    "typescript": "^3.0.1",
     "uuid": "^3.3.2",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",

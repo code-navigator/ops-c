@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test.vue should render correctly 1`] = `
+<div class="flex xs12">
+  <div class="v-input textBox v-text-field v-input--is-label-active v-input--is-dirty">
+    <div class="v-input__control">
+      <div class="v-input__slot">
+        <div class="v-text-field__slot">
+          <label aria-hidden="true" class="v-label v-label--active" style="left: 0px; position: absolute;">some label</label>
+          <input aria-label="some label" type="text" placeholder="placeholder">
+        </div>
+      </div>
+      <div class="v-text-field__details">
+        <div class="v-messages">
+          <div class="v-messages__wrapper"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

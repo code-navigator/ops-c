@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@vue/test-utils'
 import { TestHelpers } from './../testHelpers'
-import checkBox from './../../../src/components/controls/checkBox'
+import textBox from './../../../src/components/controls/textBox'
 import Vuetify from 'vuetify'
 import Vuex from 'vuex'
 
@@ -13,11 +13,11 @@ describe('test.vue', () => {
   let store
   let wrapper
   const label = 'some label'
-  const value = false
+  const value = 'some text'
 
   beforeEach(() => {
     store = new Vuex.Store({})
-    wrapper = mount(checkBox, {
+    wrapper = mount(textBox, {
       localVue,
       store,
       propsData: {
@@ -38,15 +38,14 @@ describe('test.vue', () => {
     h.hasText(label)
   })
 
-  it('should change state when clicked', () => {
-    h.hasText('false')
-    h.click('input')
-    h.hasText('true')
+  it('should display the text', () => {
+    h.hasInputValue(value)
+    h.setText('input', 'new text')
+    h.hasInputValue('new text')
   })
 
-  it('should emit a "keyup" event when clicked', () => {
-    h.noEmits('keyup')
-    h.click('input')
+  it('should change emit a keyup event when the input changes', () => {
+    h.trigger('input', 'input')
     h.emits('keyup')
   })
 

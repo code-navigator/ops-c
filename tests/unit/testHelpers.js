@@ -16,6 +16,11 @@ export class TestHelpers {
     this.expect(this.wrapper.vm[property]).toBe(value)
   }
 
+  hasInputValue (value) {
+    this.expect(this.wrapper.find('input').element.value)
+      .toBe(value)
+  }
+
   hasSelectorWithText (selector, text) {
     this.expect(
       this.wrapper.find(selector).element.textContent)
@@ -36,5 +41,15 @@ export class TestHelpers {
 
   renders () {
     this.expect(this.wrapper.html()).toMatchSnapshot()
+  }
+
+  setText (selector, text) {
+    this.expect(
+      this.wrapper.find(selector).setValue(text)
+    )
+  }
+
+  trigger (selector, event) {
+    this.wrapper.find(selector).trigger(event)
   }
 }
