@@ -1,4 +1,6 @@
 export default {
+  name: 'textBox',
+
   props: [
     'label',
     'value'

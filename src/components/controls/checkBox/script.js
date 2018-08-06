@@ -1,4 +1,6 @@
 export default {
+  name: 'checkBox',
+
   props: [
     'label',
     'value'

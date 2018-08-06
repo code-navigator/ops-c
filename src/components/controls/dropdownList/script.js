@@ -1,4 +1,6 @@
 export default {
+  name: 'dropdownList',
+
   props: [
     'label',
     'items',

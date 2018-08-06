@@ -21,6 +21,10 @@ export class TestHelpers {
       .toBe(value)
   }
 
+  hasName (name) {
+    this.expect(this.wrapper.name()).toBe(name)
+  }
+
   hasSelectorWithText (selector, text) {
     this.expect(
       this.wrapper.find(selector).element.textContent)
