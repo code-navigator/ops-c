@@ -2,26 +2,15 @@
 
 exports[`test.vue should render correctly 1`] = `
 <div class="flex xs12">
-  <div class="v-input dropdownList v-text-field v-select v-autocomplete">
+  <div role="combobox" class="v-input dropdownList v-text-field v-select">
     <div class="v-input__control">
       <div class="v-input__slot">
         <div class="v-menu v-menu--inline">
           <div class="v-menu__activator">
             <div class="v-select__slot">
               <label aria-hidden="true" class="v-label" style="left: 0px; position: absolute;">Select some label</label>
-              <input aria-label="Select some label" type="text" autocomplete="off" role="combobox">
-            </div>
-          </div>
-          <div class="v-menu__content v-autocomplete__content" style="max-height: 300px; min-width: 0px; max-width: auto; top: 12px; left: 0px; z-index: 0; display: none;">
-            <div class="v-select-list v-card">
-              <div class="v-list v-list--dense">
-                <div>
-                  <a class="v-list__tile v-list__tile--link">
-                    <div class="v-list__tile__content">
-                      <div class="v-list__tile__title">item 1</div>
-                    </div>
-                  </a>
-                </div>
+              <div class="v-select__selections">
+                <input aria-label="Select some label" readonly="readonly" type="text" autocomplete="on" aria-readonly="false">
               </div>
             </div>
           </div>

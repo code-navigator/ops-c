@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import { createLocalVue, mount } from '@vue/test-utils'
 import { TestHelpers } from './../testHelpers'
 import checkBox from './../../../src/components/controls/dropdownlist'
@@ -13,11 +14,15 @@ describe('test.vue', () => {
   let store
   let wrapper
   const label = 'some label'
-  const items = ['item 1']
-  const value = ''
+  const items = ['item 1', 'item 2']
+  const value = 'my value'
 
   beforeEach(() => {
     store = new Vuex.Store({})
+    const app = document.createElement('div')
+    app.setAttribute('data-app', true)
+    document.body.appendChild(app)
+
     wrapper = mount(checkBox, {
       localVue,
       store,
@@ -25,7 +30,8 @@ describe('test.vue', () => {
         items,
         label,
         value
-      }
+      },
+      sync: false
     })
     h = new TestHelpers(wrapper, expect)
     jest.resetModules()
@@ -44,14 +50,12 @@ describe('test.vue', () => {
     h.hasText(label)
   })
 
-  // it('should emit a "keyup" event when clicked', () => {
-  //   const app = document.createElement('div')
-  //   app.setAttribute('data-app', true)
-  //   document.body.appendChild(app)
-  //   h.noEmits('keyup')
-  //   h.click('input')
-  //   h.emits('keyup')
-  // })
+  it('should emit a "keyup" event on a change event', () => {
+    h.noEmits('keyup')
+    h.trigger('input', 'input')
+    h.trigger('input', 'change')
+    h.emits('keyup')
+  })
 
   it('should render correctly', () => {
     h.renders()
